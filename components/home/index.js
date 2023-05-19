@@ -3,6 +3,7 @@ import {Text,TouchableOpacity,View} from 'react-native'
 // import Icon from "react-native-ionicons";
 import Iconicons from '@expo/vector-icons/Ionicons'
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Locator from "../locator";
 const Home = ({navigation})=>{
     return(
         <View>

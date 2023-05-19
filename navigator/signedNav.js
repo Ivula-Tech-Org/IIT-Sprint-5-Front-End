@@ -7,6 +7,7 @@ import HomeNav from './homeNav'
 import Home from '../components/home'
 import Chat from '../components/chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import SignIn from '../components/signIn'
 
 const SignedNav = ()=>{
     const Stack = createNativeStackNavigator()
@@ -16,14 +17,17 @@ const SignedNav = ()=>{
         documentTitle={false}
         >
             <Stack.Navigator
+            initialRouteName='SignIn'
             screenOptions={{
-                headerShown:false
-
+                headerShown:false,
+                // TransitionEvent:false
+                
             }}
+            
             >
+                {true && <Stack.Screen name='Locator' component={Locator}/>}
                 <Stack.Screen name='HomeCast' component={HomeNav}/>
                 <Stack.Screen name='Chat' component={Chat}/>
-                {true && <Stack.Screen name='Locator' component={Locator}/>}
             </Stack.Navigator>
         </NavigationContainer>
         
