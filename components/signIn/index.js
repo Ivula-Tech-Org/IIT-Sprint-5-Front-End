@@ -3,13 +3,13 @@ import signStyle from './style'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Banner, LongButtonDark, LongButtonLight } from '../globals/utils'
 import { gasLift } from '../globals/images'
-const SignIn = ()=>{
+const SignIn = ({navigation})=>{
 
     const toLogin = ()=>{
-        alert('alright')
+        navigation.navigate('Login')
     }
     const toSignUp = ()=>{
-        alert('alright')
+        navigation.navigate('SignUp')
     }
     return(
         <SafeAreaView
@@ -29,8 +29,8 @@ const SignIn = ()=>{
                 padding:0
             }]}
             >
-                <LongButtonDark text={'Log In'} submit={toSignUp}/>
-                <LongButtonLight text={'Sign Up'} butStyle={{marginTop:10}} submit={toLogin}/>
+                <LongButtonDark text={'Log In'} submit={toLogin} />
+                <LongButtonLight text={'Sign Up'} butStyle={{marginTop:10}} />
                 <TouchableOpacity 
                 style={{
 

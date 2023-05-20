@@ -17,7 +17,7 @@ const SignedNav = ()=>{
         documentTitle={false}
         >
             <Stack.Navigator
-            initialRouteName='SignIn'
+            initialRouteName='HomeCast'
             screenOptions={{
                 headerShown:false,
                 // TransitionEvent:false

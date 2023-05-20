@@ -2,6 +2,8 @@ import { TouchableOpacity,Text,View, ImageBackground, TextInput } from "react-na
 import utilStyles from "./utilStyles";
 import { gasLift } from "../images";
 import { COLORS } from "../theme";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 const LongButtonDark = ({text,butStyle,textStyle,submit})=>{
 return(
@@ -66,17 +68,34 @@ const Banner = ({avator})=>{
         </View>
     )
 }
-const Back = ()=>{
-    <TouchableOpacity style={{
-        backgroundColor:'red',
+const Back = ({navigation})=>{
+    return(
+
+    <SafeAreaView
+    style={{
         position:'absolute',
-        top:30,
-        left:100,
-        height:200
-        ,backgroundColor:'red'
-    }}>
-        <Text>Back</Text>
+        left:'10%',
+        top:'10%',
+    }}
+    >
+    <TouchableOpacity style={{
+        // borderWidth:1,
+        borderRadius:100,
+        height:40,
+        width:40,
+        alignItems:'center',
+        justifyContent:'center',
+        elevation:2
+    }}
+    onPress={navigation.goBack}
+    >
+        <Text>
+            <Ionicons name="chevron-back-outline" size={28}/>
+        </Text>
     </TouchableOpacity>
+    </SafeAreaView>
+
+    )
 }
 
 export {LongButtonDark,LongButtonLight,Banner,Back}

@@ -6,7 +6,7 @@ import utilStyles from '../globals/utils/utilStyles'
 import { fillGas } from '../globals/images'
 import { useState } from 'react'
 
-const Login = ({ navigation }) => {
+const SignUp = ({ navigation }) => {
     const [loader,setLoader] = useState(false)
     const onLogin = () => {
         setLoader(true)
@@ -70,4 +70,4 @@ const Login = ({ navigation }) => {
     )
 }
 
-export default Login
+export default SignUp
