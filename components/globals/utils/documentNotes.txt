@@ -1,0 +1,4 @@
+localstorage data:
+    sessionID - varint
+    userDetails - object
+    

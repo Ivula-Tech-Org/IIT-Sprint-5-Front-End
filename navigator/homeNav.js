@@ -16,6 +16,7 @@ const HomeNav = () => {
         }
         loadFont
     })
+    
     return (<Tab.Navigator
                 screenOptions={({ route }) => ({
         

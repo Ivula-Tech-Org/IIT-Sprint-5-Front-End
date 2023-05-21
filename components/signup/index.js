@@ -3,17 +3,17 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import logInStyle from '../login/style'
 import { Back, Banner, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
 import utilStyles from '../globals/utils/utilStyles'
-import { fillGas } from '../globals/images'
+import { fillGas, orders } from '../globals/images'
 import { useState } from 'react'
 
 const SignUp = ({ navigation }) => {
-    const [loader,setLoader] = useState(false)
+    const [loader, setLoader] = useState(false)
     const onLogin = () => {
         setLoader(true)
 
     }
-    const onForget = ()=>{
-        navigation.navigate('Forgot')
+    const onDistributer = () => {
+        alert('this goes to an external web')
     }
     return (
         <SafeAreaView
@@ -26,11 +26,11 @@ const SignUp = ({ navigation }) => {
 
             <View>
 
-                <Banner avator={fillGas} />
+                <Banner avator={orders} />
                 {loader ?
-                <ActivityIndicator style={{
-                    marginBottom: 10, marginTop: 0
-                }} />:<></>}
+                    <ActivityIndicator style={{
+                        marginBottom: 10, marginTop: 0
+                    }} /> : <></>}
             </View>
             <View
                 style={[{
@@ -43,25 +43,36 @@ const SignUp = ({ navigation }) => {
                 <TextInput style={[utilStyles.inputStyle, {
 
                 }]}
-                    placeholder='User name'
-                /><TextInput style={[utilStyles.inputStyle, {
+                    placeholder='User Name'
+                />
+                <TextInput style={[utilStyles.inputStyle, {
+
+                }]}
+                    placeholder='Email'
+                />
+                <TextInput style={[utilStyles.inputStyle, {
 
                 }]}
                     placeholder='Password'
                 />
-                <LongButtonDark text={'Log In'} submit={onLogin} />
+                <TextInput style={[utilStyles.inputStyle, {
+
+                }]}
+                    placeholder='Confirm Password'
+                />
+                <LongButtonDark text={'Sign Up'} submit={onLogin} />
                 <TouchableOpacity
                     style={{
 
                         width: '100%',
                         paddingRight: '17%'
                     }}
-                    onPress={onForget}
+                    onPress={onDistributer}
                 >
                     <Text style={{
                         textAlign: 'right',
                         fontSize: 12
-                    }}>forgot password?</Text>
+                    }}>Are you a distributer?</Text>
 
                 </TouchableOpacity>
             </View>
