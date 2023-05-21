@@ -30,7 +30,7 @@ const SignIn = ({navigation})=>{
             }]}
             >
                 <LongButtonDark text={'Log In'} submit={toLogin} />
-                <LongButtonLight text={'Sign Up'} butStyle={{marginTop:10}} />
+                <LongButtonLight text={'Sign Up'} butStyle={{marginTop:10}} submit={toSignUp} />
                 <TouchableOpacity 
                 style={{
 

@@ -29,10 +29,10 @@ const UnSignedNav = ({loginHandle})=>{
                 
             }}
             >
-                <Stack.Screen name='SignUp' component={SignUp}/>
+                <Stack.Screen name='SignUp' component={SignUp}  initialParams={{reload,upadateRel}}/>
                 <Stack.Screen name='Forgot' component={Forgot}/>
                 <Stack.Screen name='Login' component={Login} initialParams={{reload,upadateRel}} />
-                <Stack.Screen name='SignIn' component={SignIn}/>
+                <Stack.Screen name='SignIn' component={SignIn}  initialParams={{reload,upadateRel}}/>
 
             </Stack.Navigator>
         </NavigationContainer>

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert, AppState } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logInStyle from '../login/style'
-import { Back, Banner, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
+import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
 import utilStyles from '../globals/utils/utilStyles'
 import { fillGas } from '../globals/images'
 import { useEffect, useState } from 'react'
@@ -14,14 +14,17 @@ const Login = ({ navigation,route }) => {
     const [loader, setLoader] = useState(false)
     const [checker, setChecker] = useState()
     const {reload,upadateRel} = route.params
-    
+    const [userEmail, setUserEmail] = useState()
+    const [password, setPassword] = useState()
+    const [type, setType] = useState()
+    const [errorMessage,setErrorMessage] = useState()
     const onLogin = () => {
         setLoader(true)
         var errToken = false
         try
         {
 
-            axios.get('http://192.168.1.106:8000/auth_service/login', { params: { type: 'client', userEmail: 'shelton@gmail.com', password: 'password' } })
+            axios.get('http://192.168.1.106:8000/auth_service/login', { params: { type: 'client', userEmail: userEmail, password: password} })
             .then(async (res) => {
                 if(res.status = '200'){
                     // console.log(res.data.token)
@@ -31,29 +34,32 @@ const Login = ({ navigation,route }) => {
                         await AsyncStorage.setItem('Token',token)
                         
                             setLoader(false)
-                            console.log(route.params)
+                            setErrorMessage(null)
                             upadateRel(true)
-                        console.log('going here')
+
                       
                     }catch(err){
-                        alert('something went wrong')
+                        setErrorMessage('something went wrong')
                         setLoader(false)
                         console.log(err)
                     }
+                }else{
+                    setErrorMessage('something went wrong')
                 }
             }).catch((err)=>{
                 if(err.response){
 
                     console.log('these ',err.response.data.token)
-                    alert(err.response.data.token)
+                    setErrorMessage(err.response.data.token)
+                    setLoader(false)
                 }else{
-                    alert('Something went wrong')
+                    setErrorMessage('Something went wrong')
                     setLoader(false)
                 }
             })
         }catch(err){
             setLoader(false)
-            alert('Sory, something went wrong')
+            setErrorMessage('Sory, something went wrong')
         }
     }
     const onForget = () => {
@@ -84,11 +90,24 @@ const Login = ({ navigation,route }) => {
                     padding: 0
                 }]}
             >
-                <TextInput style={[utilStyles.inputStyle, {
+                {errorMessage && <ErrorBox text={errorMessage}/>}
+
+                <TextInput onChangeText={(e)=>{
+                    console.log(e)
+                    setUserEmail(e)
+
+
+                }} style={[utilStyles.inputStyle, {
 
                 }]}
                     placeholder='User name'
-                /><TextInput style={[utilStyles.inputStyle, {
+                />
+                <TextInput secureTextEntry={true} onChangeText={(e)=>{
+                    console.log(e)
+                    setPassword(e)
+
+
+                }} style={[utilStyles.inputStyle, {
 
                 }]}
                     placeholder='Password'

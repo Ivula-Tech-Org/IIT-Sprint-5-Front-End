@@ -1,22 +1,42 @@
 import React from "react";
-import {Text,TouchableOpacity,View} from 'react-native'
+import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
 // import Icon from "react-native-ionicons";
 import Iconicons from '@expo/vector-icons/Ionicons'
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Locator from "../locator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const Home = ({navigation})=>{
-    return(
-        <View>
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CategBar, HeaderBar, ListGas, SearchBar } from "../globals/utils";
+import { gasLift, gasWin } from "../globals/images";
+import { COLORS } from "../globals/theme";
+const Home = ({ navigation }) => {
+    const dummyList = [{ gasName: 'Total', gasImage: gasWin }, { gasName: 'Kgas', gasImage: gasWin }]
+    return (
+        //  <KeyboardAvoidingView   behavior="padding" enabled> 
 
-        <Text>hello world</Text>
-        {/* <Icon name="add"/> */}
-        <Ionicons name='home' size={32} color='green'/>
-        <TouchableOpacity onPress={async()=>{
-            // navigation.navigate('Chat',{clientID:'123493412',contrID:'0809876234'})
-            await AsyncStorage.clear()
-        }}><Text>click</Text></TouchableOpacity>
-        </View>
+
+        <SafeAreaView style={{
+            // backgroundColor:'red'
+        }}>
+            <HeaderBar text={'Home'} />
+            <SearchBar searchLogic={() => {
+                console.log('mkuu')
+            }} custom={{
+                marginTop: 10
+            }} />
+
+            <View>
+                <CategBar itemList={dummyList} handleCat={() => {
+                    alert('handle')
+                }} />
+
+            </View>
+                <ListGas custom={{
+                    height:'68%'
+                }}/>
+        </SafeAreaView>
+        // </KeyboardAvoidingView>
+
     )
 }
 

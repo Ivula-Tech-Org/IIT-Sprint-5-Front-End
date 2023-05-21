@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import {SafeAreaView, StatusBar, Text,View} from 'react-native'
+import {KeyboardAvoidingView, SafeAreaView, StatusBar, Text,View} from 'react-native'
 import SignedNav from './navigator/signedNav'
 import UnSignedNav from './navigator/unSignedNav'
 import EntrancePage from './navigator/entrance'
@@ -8,7 +8,7 @@ import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async
 const App = ()=>{
 const [isSigned,setIsSigned] = useState(false)
 const [notSigned,setNotSigned] = useState(false)
-const [loader,setLoader] = useState(true)
+const [loader,setLoader] = useState(false)
 const [token,setToken] = useState()
 
 useEffect(()=>{
@@ -55,10 +55,13 @@ const loginhandle = (data)=>{
     <SafeAreaView style={{
       flex:1
     }}>
+    {/* <KeyboardAvoidingView   behavior="padding" enabled> */}
+
       {isSigned && <SignedNav />}
       {notSigned && <UnSignedNav loginHandle={loginhandle}/>}
       {loader && <EntrancePage/>}
       {/* <Text>hello world</Text> */}
+    {/* </KeyboardAvoidingView> */}
     </SafeAreaView >
   )
 }

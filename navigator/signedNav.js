@@ -25,7 +25,7 @@ const SignedNav = ()=>{
             }}
             
             >
-                {true && <Stack.Screen name='Locator' component={Locator}/>}
+                <Stack.Screen name='Locator' component={Locator}/>
                 <Stack.Screen name='HomeCast' component={HomeNav}/>
                 <Stack.Screen name='Chat' component={Chat}/>
             </Stack.Navigator>
