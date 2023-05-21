@@ -131,21 +131,21 @@ const HeaderBar = ({ text }) => {
         }}>
 
             <ImageBackground
-            source={gasWin}
+                source={gasWin}
                 style={{
                     height: 50,
                     width: 50,
                     borderWidth: 1,
                     borderRadius: 100,
                     alignSelf: 'flex-end'
-                    ,overflow:'hidden'
+                    , overflow: 'hidden'
                 }}>
             </ImageBackground>
             <TouchableOpacity
                 style={{
 
                     alignSelf: 'flex-end'
-                    ,left:'20%'
+                    , left: '20%'
                 }}
             >
                 <Ionicons name="notifications-outline" size={20} />
@@ -154,156 +154,195 @@ const HeaderBar = ({ text }) => {
                 color: COLORS.primary,
                 fontWeight: 'bold'
                 , fontSize: 18,
-                left:'400%',
-                top:15
-                
+                left: '400%',
+                top: 15
+
             }}>{text}</Text>
 
         </View>
     )
 }
-const SearchBar = ({searchLogic,custom})=>{
-    return(
+const SearchBar = ({ searchLogic, custom }) => {
+    return (
         <View
-        style={[{
+            style={[{
 
-                flexDirection:'row',
-                justifyContent:'space-between',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 // alignItems:'center',
-                borderWidth:1,
-                borderColor:COLORS.primary,
-                borderRadius:20,
-                width:'80%',
-                alignSelf:'center'
+                borderWidth: 1,
+                borderColor: COLORS.primary,
+                borderRadius: 20,
+                width: '80%',
+                alignSelf: 'center'
 
-        },custom]}
+            }, custom]}
         >
             <TextInput placeholder="type here" style={{
                 // borderWidth:1,
-                paddingLeft:20,
-                width:'74%'
-            }}/>
-            <TouchableOpacity 
-            onPress={searchLogic}
-            style={{
-                backgroundColor:COLORS.primary,
-                width:'25%',
-                height:40,
-                justifyContent:'center',
-                alignItems:'center',
-                borderRadius:20,
-                borderBottomLeftRadius:0
-            }}
+                paddingLeft: 20,
+                width: '74%'
+            }} />
+            <TouchableOpacity
+                onPress={searchLogic}
+                style={{
+                    backgroundColor: COLORS.primary,
+                    width: '25%',
+                    height: 40,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 20,
+                    borderBottomLeftRadius: 0
+                }}
             >
-            <Ionicons name="search" size={20} color={'white'}/>
+                <Ionicons name="search" size={20} color={'white'} />
             </TouchableOpacity>
         </View>
     )
 
 }
 
-const dataList = ['me','up','you','and']
-const CategBar = ({itemList,handleCat})=>{
-    return(
-            <FlatList 
+const dataList = ['me', 'up', 'you', 'and']
+const CategBar = ({ itemList, handleCat }) => {
+    return (
+        <FlatList
             data={itemList}
             horizontal
             style={{
-                borderBottomWidth:2
-                ,paddingLeft:30
-                ,paddingLRight:30
-                ,alignSelf:'center',
-                width:'80%',
-                marginTop:30,
+                borderBottomWidth: 2
+                , paddingLeft: 30
+                , paddingLRight: 30
+                , alignSelf: 'center',
+                width: '80%',
+                marginTop: 30,
                 // height:50,
-                height:50,
-                borderColor:COLORS.primary
+                height: 50,
+                borderColor: COLORS.primary
             }}
-            
-            renderItem={(item)=>{
+
+            renderItem={(item) => {
                 item = item.item
-                return(
+                return (
 
                     <TouchableOpacity
-                    onPress={handleCat}
-                    style={{
-                        justifyContent:'center',
-                        alignItems:'center',
-                        marginRight:30
-            }}
-                    >
-                        <ImageBackground 
-                        source={item.gasImage}
+                        onPress={handleCat}
                         style={{
-                            height:40,
-                            width:40,
-                            background:'red'
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 30
                         }}
+                    >
+                        <ImageBackground
+                            source={item.gasImage}
+                            style={{
+                                height: 40,
+                                width: 40,
+                                background: 'red'
+                            }}
                         ></ImageBackground>
                         <Text style={{
-                            fontSize:10,
-                            paddingBottom:10
+                            fontSize: 10,
+                            paddingBottom: 10
                         }}>{item.gasName}</Text>
                     </TouchableOpacity>
-                    )
+                )
             }}
-            />
+        />
     )
 
 }
-const ListGas = ({custom})=>{
-    return(
-        <View 
-        style={[{
-            backgroundColor: 'white',
-            marginTop:'5%',
-            borderWidth:1,
-            borderColor:COLORS.primary,
-            borderRadius:30,
-            borderBottomLeftRadius:0,
-            borderBottomRightRadius:0,
-            overflow:'hidden',
-            padding:15
-        },custom]}>
-            <FlatList 
-            data={dataList}
-            renderItem={(item)=>{
-                let name = 'shelton'
-                return(
-                    <View
-                    style={{
-                        borderWidth:1,
-                        width:'30%',
-                        borderRadius:10,
-                        overflow:'hidden'
-                    }}
-                    >
-                        <ImageBackground
-                        source={orders}
-                        style={{
-                            height:100
-                        }}
-                        />
+const ListGas = ({ custom }) => {
+    return (
+        <View
+            style={[{
+                backgroundColor: 'white',
+                marginTop: '5%',
+                borderWidth: 1,
+                borderColor: COLORS.primary,
+                borderRadius: 30,
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                overflow: 'hidden',
+                padding: 15,
+                
+            }, custom]}>
+            <FlatList
+                data={dataList}
+                style={{
+                    flexDirection:'column'
+                }}
+                horizontal={false}
+                contentContainerStyle={{
+                    paddingHorizontal:5,
+                    paddingVertical:5
+                }}
+                numColumns={3}
+                renderItem={(item) => {
+                    let name = 'shelton omondi kiageasdfadfafd'
+                    return (
                         <View
-                        style={{
-                            backgroundColor:COLORS.primary
-                        }}
+                            style={{
+                                width: '30%',
+                                borderRadius: 10,
+                                overflow: 'hidden',
+                                marginLeft:'3%',
+                                marginBottom:'5%',
+                                elevation:5
+                                
+                            }}
                         >
-                    <Text
-                    style={{
-                        color:'white'
-                        ,fontWeight:'bold'
-                    }}
-                    
-                    >{name.toUpperCase()}</Text>
-                    </View>
-                    </View>
+                            <ImageBackground
+                                source={orders}
+                                style={{
+                                    height: 100
+                                }}
+                            />
+                            <View
+                                style={{
+                                    backgroundColor: COLORS.primary
+                                    , padding: 10
+                                    ,paddingBottom:5
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: 'white'
+                                        , fontWeight: 'bold'
+                                        ,fontSize:10
+                                    }}
 
-                )
-            }}
+                                >{name.toUpperCase()}</Text>
+                                <Text
+                                    style={{
+                                        color: 'white',
+                                        fontSize: 8,
+                                        marginTop: -3
+                                    }}
+                                >nairobi, kenya</Text>
+                                <View
+                                    style={{
+                                        flexDirection:'row'
+                                    }}
+                                >
+                                    <Ionicons name="star" style={{
+                                        marginTop: 5
+                                    }} color={'white'} />
+                                    <Text style={{
+                                        color: 'white',
+                                        fontSize: 10,
+                                        marginTop:5,
+                                        marginLeft:5
+                                    }}>5</Text>
+                                </View>
+                            </View>
+
+                        </View>
+
+                    )
+                }}
             />
         </View>
     )
 
 }
-export { LongButtonDark, ListGas,LongButtonLight, HeaderBar, Banner, Back,SearchBar, ErrorBox,CategBar }
+export { LongButtonDark, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar }
