@@ -5,6 +5,7 @@ import { COLORS } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { gasWin } from "../images";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const LongButtonDark = ({ text, butStyle, textStyle, submit }) => {
     return (
@@ -251,21 +252,51 @@ const CategBar = ({ itemList, handleCat }) => {
     )
 
 }
-const ListGas = ({ custom }) => {
+const Container = ({custom,RenderItem})=>{
+    return(
+        <View 
+        style={[{
+            backgroundColor: 'white',
+            marginTop: '5%',
+            borderWidth: 1,
+            borderColor: COLORS.primary,
+            borderRadius: 30,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            overflow: 'hidden',
+            padding: 15,
+            
+        }, custom]}>
+            <RenderItem/>
+        </View>
+    )
+}
+const ListGas = ({ custom ,config}) => {
+    const navigation = config.navigation
+    const navTo = config.to
+
+    const Thatcode = ()=>{
+        return(
+            <Text>me and me</Text>
+        )
+    }
     return (
-        <View
-            style={[{
-                backgroundColor: 'white',
-                marginTop: '5%',
-                borderWidth: 1,
-                borderColor: COLORS.primary,
-                borderRadius: 30,
-                borderBottomLeftRadius: 0,
-                borderBottomRightRadius: 0,
-                overflow: 'hidden',
-                padding: 15,
+        <Container
+        custom={custom}
+        RenderItem={()=>{
+            return(
+
+            <View style={{
                 
-            }, custom]}>
+            }}>
+                <Text
+                style={{
+                    color:COLORS.primary,
+                    fontSize:10,
+                    marginTop:-5,
+                    marginLeft:15
+                }}
+                >Closest Around you</Text>
             <FlatList
                 data={dataList}
                 style={{
@@ -280,7 +311,10 @@ const ListGas = ({ custom }) => {
                 renderItem={(item) => {
                     let name = 'shelton omondi kiageasdfadfafd'
                     return (
-                        <View
+                        <TouchableOpacity
+                        onPress={()=>{
+                            navigation.navigate(navTo,{item})
+                        }}
                             style={{
                                 width: '30%',
                                 borderRadius: 10,
@@ -336,13 +370,67 @@ const ListGas = ({ custom }) => {
                                 </View>
                             </View>
 
-                        </View>
+                        </TouchableOpacity>
 
                     )
                 }}
             />
-        </View>
+            </View>
+            )
+        }}/>
+        
     )
 
 }
-export { LongButtonDark, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar }
+const ProfileCircle = ({custom,source})=>{
+    return(
+        <ImageBackground
+        style={[{
+            borderWidth:1,
+            backgroundColor:'red',
+            borderRadius:100,
+            overflow:'hidden',
+            alignSelf:'center',
+            borderColor:COLORS.primary
+        },custom]}
+        source={source}
+        />
+        
+    )
+}
+const IconButton = ({onClick,icon})=>{
+    return(
+        <TouchableOpacity style={{
+            background:'red',
+            padding:5,
+            borderRadius:100,
+            borderWidth:1,
+            borderColor:COLORS.primary,
+            marginTop:'10%'
+
+        }}
+        onPress={onClick}
+        >
+            <Ionicons name={icon} size={20}/>
+        </TouchableOpacity>
+    )
+}
+const MenuContainer = ({RenderItem,custom})=>{
+    return(
+        <View 
+        style={[{
+            borderWidth:1,
+            borderColor:Colors.primary,
+            padding:5,
+            borderRadius:15,
+            flexDirection:'row',
+            justifyContent:'center',
+            alignItems:'center',
+            width:200
+        },custom]}
+        >
+            <RenderItem/>
+        </View>
+    )
+}
+export {IconButton,MenuContainer, LongButtonDark,Container,ProfileCircle, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar }

@@ -7,6 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useEffect } from 'react'
 import { COLORS } from '../components/globals/theme'
+import Profile from '../components/profile'
 const HomeNav = () => {
     const Tab = createBottomTabNavigator()
     // useEffect(() => {
@@ -23,7 +24,7 @@ const HomeNav = () => {
             flex: 1
         }}>
             <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName='Profile'
                 screenOptions={({ route }) => ({
 
                     headerShown: false,
@@ -32,7 +33,7 @@ const HomeNav = () => {
                     
                 })}
             >
-                <Tab.Screen name='Profile' component={Home} options={{
+                <Tab.Screen name='Profile' component={Profile} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='person' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='person-outline' size={20} />
                     ),

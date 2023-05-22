@@ -33,7 +33,7 @@ const Home = ({ navigation }) => {
             </View>
                 <ListGas custom={{
                     height:'68%'
-                }}/>
+                }} config={{navigation:navigation, to:'Chat'}}/>
         </SafeAreaView>
         // </KeyboardAvoidingView>
 
