@@ -24,7 +24,7 @@ const Login = ({ navigation,route }) => {
         try
         {
 
-            axios.get('http://192.168.1.106:8000/auth_service/login', { params: { type: 'client', userEmail: userEmail, password: password} })
+            axios.get('http://192.168.43.102:8000/auth_service/login', { params: { type: 'client', userEmail: userEmail, password: password} })
             .then(async (res) => {
                 if(res.status = '200'){
                     // console.log(res.data.token)
@@ -92,7 +92,11 @@ const Login = ({ navigation,route }) => {
             >
                 {errorMessage && <ErrorBox text={errorMessage}/>}
 
-                <TextInput onChangeText={(e)=>{
+                <TextInput 
+                keyboardType ='email-address'
+                autoCapitalize = 'none'
+                autoCompleteType = 'email'
+                onChangeText={(e)=>{
                     console.log(e)
                     setUserEmail(e)
 

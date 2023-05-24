@@ -1,43 +1,24 @@
-import React from "react";
-import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
-// import Icon from "react-native-ionicons";
-import Iconicons from '@expo/vector-icons/Ionicons'
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Locator from "../locator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { CategBar, HeaderBar, ListGas, SearchBar } from "../globals/utils";
-import { gasLift, gasWin } from "../globals/images";
-import { COLORS } from "../globals/theme";
-const Home = ({ navigation }) => {
-    const dummyList = [{ gasName: 'Total', gasImage: gasWin }, { gasName: 'Kgas', gasImage: gasWin }]
-    return (
-        //  <KeyboardAvoidingView   behavior="padding" enabled> 
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {View,Text} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import Home from './home'
+import Station from '../station'
 
+const HomeStack = ()=>{
+    const Stack = createNativeStackNavigator()
+    return(
+        
+        <Stack.Navigator
+        initialRouteName='Homie'
+        screenOptions={{
+            headerShown:false
+        }}
+        >
+            <Stack.Screen name='Homie' component={Home}/>
+            <Stack.Screen name='Station' component={Station}/>
 
-        <SafeAreaView style={{
-            // backgroundColor:'red'
-        }}>
-            <HeaderBar text={'Home'} />
-            <SearchBar searchLogic={() => {
-                console.log('mkuu')
-            }} custom={{
-                marginTop: 10
-            }} />
-
-            <View>
-                <CategBar itemList={dummyList} handleCat={() => {
-                    alert('handle')
-                }} />
-
-            </View>
-                <ListGas custom={{
-                    height:'68%'
-                }} config={{navigation:navigation, to:'Chat'}}/>
-        </SafeAreaView>
-        // </KeyboardAvoidingView>
-
+        </Stack.Navigator>
     )
 }
 
-export default Home
+export default HomeStack

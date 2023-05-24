@@ -114,6 +114,10 @@ const SignUp = ({ navigation,route }) => {
                     placeholder='User Name'
                 />
                 <TextInput
+                
+                keyboardType ='email-address'
+                autoCapitalize = 'none'
+                autoCompleteType = 'email'
                     onChangeText={(text) => {
                         setEmail(text)
                     }}

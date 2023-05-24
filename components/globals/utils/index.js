@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, ImageBackground, TextInput, Touchable, ScrollView, FlatList } from "react-native";
+import { TouchableOpacity, Text, View, ImageBackground, TextInput, Touchable, ScrollView, FlatList, RefreshControl } from "react-native";
 import utilStyles from "./utilStyles";
 import { fillGas, gasLift, orders } from "../images";
 import { COLORS } from "../theme";
@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { gasWin } from "../images";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import MapView, { Marker } from "react-native-maps";
 
 const LongButtonDark = ({ text, butStyle, textStyle, submit }) => {
     return (
@@ -252,185 +253,436 @@ const CategBar = ({ itemList, handleCat }) => {
     )
 
 }
-const Container = ({custom,RenderItem})=>{
-    return(
-        <View 
-        style={[{
-            backgroundColor: 'white',
-            marginTop: '5%',
-            borderWidth: 1,
-            borderColor: COLORS.primary,
-            borderRadius: 30,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            overflow: 'hidden',
-            padding: 15,
-            
-        }, custom]}>
-            <RenderItem/>
+const Container = ({ custom, RenderItem }) => {
+    return (
+        <View
+            style={[{
+                backgroundColor: 'white',
+                marginTop: '5%',
+                borderWidth: 1,
+                borderColor: COLORS.primary,
+                borderRadius: 30,
+                borderBottomLeftRadius: 0,
+                borderBottomRightRadius: 0,
+                overflow: 'hidden',
+                padding: 15,
+
+            }, custom]}>
+            <RenderItem />
         </View>
     )
 }
-const ListGas = ({ custom ,config}) => {
+const ListGas = ({ custom, config }) => {
     const navigation = config.navigation
     const navTo = config.to
 
-    const Thatcode = ()=>{
-        return(
-            <Text>me and me</Text>
-        )
-    }
     return (
         <Container
-        custom={custom}
-        RenderItem={()=>{
-            return(
+            custom={custom}
+            RenderItem={() => {
+                return (
 
-            <View style={{
-                
-            }}>
-                <Text
-                style={{
-                    color:COLORS.primary,
-                    fontSize:10,
-                    marginTop:-5,
-                    marginLeft:15
-                }}
-                >Closest Around you</Text>
-            <FlatList
-                data={dataList}
-                style={{
-                    flexDirection:'column'
-                }}
-                horizontal={false}
-                contentContainerStyle={{
-                    paddingHorizontal:5,
-                    paddingVertical:5
-                }}
-                numColumns={3}
-                renderItem={(item) => {
-                    let name = 'shelton omondi kiageasdfadfafd'
-                    return (
-                        <TouchableOpacity
-                        onPress={()=>{
-                            navigation.navigate(navTo,{item})
-                        }}
+                    <View style={{
+
+                    }}>
+                        <Text
                             style={{
-                                width: '30%',
-                                borderRadius: 10,
-                                overflow: 'hidden',
-                                marginLeft:'3%',
-                                marginBottom:'5%',
-                                elevation:5
-                                
+                                color: COLORS.primary,
+                                fontSize: 10,
+                                marginTop: -5,
+                                marginLeft: 15
                             }}
-                        >
-                            <ImageBackground
-                                source={orders}
-                                style={{
-                                    height: 100
-                                }}
-                            />
-                            <View
-                                style={{
-                                    backgroundColor: COLORS.primary
-                                    , padding: 10
-                                    ,paddingBottom:5
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        color: 'white'
-                                        , fontWeight: 'bold'
-                                        ,fontSize:10
-                                    }}
+                        >Closest Around you</Text>
+                        <FlatList
+                            data={dataList}
+                            style={{
+                                flexDirection: 'column',
+                                // paddingBottom:50
+                            }}
+                            refreshControl={
+                                <RefreshControl refreshing={false} onRefresh={()=>{
+                                    alert('hellow wolrd')
+                                }}/>
+                            }
+                            horizontal={false}
+                            contentContainerStyle={{
+                                paddingHorizontal: 5,
+                                paddingVertical: 5,
+                                paddingBottom:50
+                            }}
+                            numColumns={3}
+                            renderItem={(item) => {
+                                let name = 'shelton omondi kiageasdfadfafd'
+                                return (
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            navigation.navigate(navTo, { item })
+                                        }}
+                                        style={{
+                                            width: '30%',
+                                            borderRadius: 10,
+                                            overflow: 'hidden',
+                                            marginLeft: '3%',
+                                            marginBottom: '5%',
+                                            elevation: 5
 
-                                >{name.toUpperCase()}</Text>
-                                <Text
-                                    style={{
-                                        color: 'white',
-                                        fontSize: 8,
-                                        marginTop: -3
-                                    }}
-                                >nairobi, kenya</Text>
-                                <View
-                                    style={{
-                                        flexDirection:'row'
-                                    }}
-                                >
-                                    <Ionicons name="star" style={{
-                                        marginTop: 5
-                                    }} color={'white'} />
-                                    <Text style={{
-                                        color: 'white',
-                                        fontSize: 10,
-                                        marginTop:5,
-                                        marginLeft:5
-                                    }}>5</Text>
-                                </View>
-                            </View>
+                                        }}
+                                    >
+                                        <ImageBackground
+                                            source={orders}
+                                            style={{
+                                                height: 100,
+                                                backgroundColor: 'grey'
+                                            }}
+                                        />
+                                        <View
+                                            style={{
+                                                backgroundColor: COLORS.primary
+                                                , padding: 10
+                                                , paddingBottom: 5
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: 'white'
+                                                    , fontWeight: 'bold'
+                                                    , fontSize: 10
+                                                }}
 
-                        </TouchableOpacity>
+                                            >{name.toUpperCase()}</Text>
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 8,
+                                                    marginTop: -3
+                                                }}
+                                            >nairobi, kenya</Text>
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row'
+                                                }}
+                                            >
+                                                <Ionicons name="star" style={{
+                                                    marginTop: 5
+                                                }} color={'white'} />
+                                                <Text style={{
+                                                    color: 'white',
+                                                    fontSize: 10,
+                                                    marginTop: 5,
+                                                    marginLeft: 5
+                                                }}>5</Text>
+                                            </View>
+                                        </View>
 
-                    )
-                }}
-            />
-            </View>
-            )
-        }}/>
-        
+                                    </TouchableOpacity>
+
+                                )
+                            }}
+                        />
+                    </View>
+                )
+            }} />
+
     )
 
 }
-const ProfileCircle = ({custom,source})=>{
-    return(
+const ProfileCircle = ({ custom, source }) => {
+    return (
         <ImageBackground
-        style={[{
-            borderWidth:1,
-            backgroundColor:'red',
-            borderRadius:100,
-            overflow:'hidden',
-            alignSelf:'center',
-            borderColor:COLORS.primary
-        },custom]}
-        source={source}
+            style={[{
+                borderWidth: 1,
+                backgroundColor: 'grey',
+                borderRadius: 100,
+                overflow: 'hidden',
+                alignSelf: 'center',
+                borderColor: COLORS.primary
+            }, custom]}
+            source={source}
         />
-        
+
     )
 }
-const IconButton = ({onClick,icon})=>{
-    return(
-        <TouchableOpacity style={{
-            background:'red',
-            padding:5,
-            borderRadius:100,
-            borderWidth:1,
-            borderColor:COLORS.primary,
-            marginTop:'10%'
+const IconButton = ({ onClick, icon, size, custom }) => {
+    return (
+        <TouchableOpacity style={[{
+            background: 'red',
+            padding: 5,
+            borderRadius: 100,
+            borderWidth: 1,
+            borderColor: COLORS.primary,
+            height: size.box,
+            width: size.box,
+            justifyContent: 'center'
+            , alignItems: 'center'
 
-        }}
-        onPress={onClick}
+        }, custom]}
+            onPress={onClick}
         >
-            <Ionicons name={icon} size={20}/>
+            <Ionicons name={icon} size={size.icon} />
         </TouchableOpacity>
     )
 }
-const MenuContainer = ({RenderItem,custom})=>{
-    return(
-        <View 
-        style={[{
-            borderWidth:1,
-            borderColor:Colors.primary,
-            padding:5,
-            borderRadius:15,
-            flexDirection:'row',
-            justifyContent:'center',
-            alignItems:'center',
-            width:200
-        },custom]}
+const MenuContainer = ({ RenderItem, custom }) => {
+    return (
+        <View
+            style={[{
+                borderWidth: 1,
+                borderColor: Colors.primary,
+                padding: 5,
+                borderRadius: 15,
+            }, custom]}
         >
-            <RenderItem/>
+            <RenderItem />
         </View>
     )
 }
-export {IconButton,MenuContainer, LongButtonDark,Container,ProfileCircle, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar }
+const GasPlate = ({ custom, dataList, config }) => {
+    const navigation = config.navigation
+    const navTo = config.to
+
+    return (
+        <Container
+            custom={custom}
+            RenderItem={() => {
+                return (
+
+                    <View style={{
+
+                    }}>
+                        <Text
+                            style={{
+                                color: COLORS.primary,
+                                fontSize: 10,
+                                marginTop: -5,
+                                marginLeft: 15
+                            }}
+                        >Closest Around you</Text>
+                        <FlatList
+                            data={dataList}
+                            style={{
+                                // flexDirection:'row'
+                            }}
+                            // horizontal={false}
+                            contentContainerStyle={{
+                                paddingHorizontal: 5,
+                                paddingVertical: 5
+                            }}
+                            // numColumns={3}
+                            renderItem={(item) => {
+                                let name = 'shelton omondi kiage'
+                                return (
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            navigation.navigate(navTo, { item })
+                                        }}
+                                        style={{
+                                            width: '90%',
+                                            borderRadius: 10,
+                                            overflow: 'hidden',
+                                            marginLeft: '3%',
+                                            marginBottom: '5%',
+                                            elevation: 5,
+                                            flexDirection: 'row'
+
+                                        }}
+                                    >
+                                        <ImageBackground
+                                            source={orders}
+                                            style={{
+                                                width: 100
+                                                , height: '100%'
+                                            }}
+                                        />
+                                        <View
+                                            style={{
+                                                backgroundColor: COLORS.primary
+                                                , padding: 10,
+                                                paddingRight: 50,
+                                                width: '100%'
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: 'white'
+                                                    , fontWeight: 'bold'
+                                                    , fontSize: 11
+                                                }}
+
+                                            >{name.toUpperCase()}</Text>
+
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 11,
+                                                }}
+                                            >Gass Refill</Text>
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 9,
+                                                    marginTop: 3
+                                                }}
+                                            >nairobi, kenya</Text>
+
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 9,
+                                                    marginTop: -3
+
+                                                }}
+                                            >Price: 200/=</Text>
+
+
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    fontSize: 9,
+                                                    marginTop: -3
+                                                }}
+                                            >Weight : 12 kg</Text>
+
+                                            <View
+                                                style={{
+                                                    flexDirection: 'row'
+                                                    , bottom: 0
+                                                }}
+                                            >
+                                                <Ionicons name="star" style={{
+                                                    marginTop: 5
+                                                }} color={'white'} />
+                                                <Text style={{
+                                                    color: 'white',
+                                                    fontSize: 10,
+                                                    marginTop: 5,
+                                                    marginLeft: 5
+                                                }}>5</Text>
+                                            </View>
+                                        </View>
+
+                                    </TouchableOpacity>
+
+                                )
+                            }}
+                        />
+                    </View>
+                )
+            }} />
+
+    )
+}
+
+const Maps = ({ withRef,tracer, withMarker, initialRegion, currRegion, custom }) => {
+    return (
+
+        <View style={[{ height: '50%' }, custom]}>
+            <MapView
+                ref={withRef}
+                style={{ height: '100%' }}
+                showsUserLocation={true}
+                followsUserLocation={true}
+            >
+                {currRegion &&
+                    <>
+                        <Marker
+                            coordinate={{
+                                latitude: currRegion.latitude,
+                                longitude: currRegion.longitude,
+                            }}
+                            title="You"
+                        >
+
+                        </Marker>
+                        {tracer && 
+                        <Marker
+                            coordinate={{
+                                // latitude: currRegion.latitude,
+                                latitude: -1.3198768,
+                                longitude: 36.8998693,
+
+
+                                // longitude: currRegion.longitude,
+                            }}
+                            title="Supplier"
+                        >
+
+                        </Marker>}
+                    </>
+                }
+            </MapView>
+        </View>
+    )
+}
+const Deals = ({onClick,dealData})=>{
+    return(
+        <>
+        <FlatList
+        // scrollEnabled={true}
+        style={{
+            height:'30%',
+        }}
+        contentContainerStyle={{
+            paddingBottom:50
+        }}
+        data={dealData}
+        renderItem={()=>{
+            return(
+                <TouchableOpacity
+                onPress={onClick}
+                style={{
+                    padding:5,
+                    width:'90%',
+                    borderRadius:10,
+                    borderWidth:1,
+                    marginTop:15,
+                    flexDirection:'row'
+
+                }}
+                >
+                    <ImageBackground
+                    source={gasLift}
+                    style={{
+                        height:60,
+                        width:60,
+                        overflow:'hidden',
+                        borderWidth:1,
+                        borderRadius:100
+                    }}
+                    />
+                    <View 
+                    
+                    style={{
+                        paddingLeft:20
+                    }}>
+                        <Text style={{
+                            fontSize:15,
+                            color:COLORS.primary,
+                            // fontWeight:'bold'
+                        }}>Gass Refill</Text>
+                        <Text style={{
+                            fontSize:10
+                        }}>40 - 60 kg</Text>
+                        <Text style={{
+                            fontSize:10
+                        }}>22 mins</Text>
+                        <Text style={{
+                            fontSize:12,
+                            left:'180%'
+                        }}>1000/=</Text>
+                    </View>
+                </TouchableOpacity>
+            )
+        }}
+        ListEmptyComponent={()=>{
+            return(
+                <View>
+                    <Text>No Deals here</Text>
+                </View>
+            )
+        }}
+        />
+
+        </>
+    )
+}
+export { IconButton, Maps, MenuContainer, GasPlate, LongButtonDark, Container, ProfileCircle, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar ,Deals}

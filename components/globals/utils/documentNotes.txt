@@ -1,4 +1,7 @@
 localstorage data:
     sessionID - varint
     userDetails - object
-    
+    ######
+
+    - all flatlist should be given a listemptycomponent
+    - all flatlist should be scrollable

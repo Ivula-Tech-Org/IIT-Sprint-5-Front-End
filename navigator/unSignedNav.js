@@ -18,9 +18,6 @@ const UnSignedNav = ({loginHandle})=>{
     }
     return(
         
-        <NavigationContainer 
-        documentTitle={false}
-        >
             <Stack.Navigator
             initialRouteName='SignIn'
             screenOptions={{ 
@@ -35,7 +32,6 @@ const UnSignedNav = ({loginHandle})=>{
                 <Stack.Screen name='SignIn' component={SignIn}  initialParams={{reload,upadateRel}}/>
 
             </Stack.Navigator>
-        </NavigationContainer>
         
     )
 }

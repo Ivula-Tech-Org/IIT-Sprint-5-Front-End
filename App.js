@@ -4,6 +4,7 @@ import SignedNav from './navigator/signedNav'
 import UnSignedNav from './navigator/unSignedNav'
 import EntrancePage from './navigator/entrance'
 import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async-storage'
+import { NavigationContainer } from '@react-navigation/native'
 
 const App = ()=>{
 const [isSigned,setIsSigned] = useState(false)
@@ -17,11 +18,11 @@ useEffect(()=>{
     try{
       const tokenme = await AsyncStorage.getItem('Token')
       if(tokenme){
+        setToken(tokenme)
         setTimeout(() => {
           setNotSigned(false)
           setIsSigned(true)
           setLoader(false)
-          setToken(tokenme)
         }, 3000);
       }else{
         setTimeout(() => {
@@ -40,9 +41,39 @@ useEffect(()=>{
   })()
 
 },[token])
+
+class LoadHandler {
+  handleLogOut(){
+
+  setIsSigned(false)
+  setLoader(true)
+  setTimeout(() => {
+    
+  setNotSigned(true)
+  setLoader(false)
+  }, 2000);
+  }
+}
+
+// console.log('hi',LoadHandler)
+
+// useEffect(()=>{
+
+// class loadHandler {
+//   handleLogOut(){
+//     alert('log out')
+//   }
+// }
+// const handle = new loadHandler
+//   console.log(handle.handleLogOut)
+//   handle.handleLogOut()
+//   console.log('hi')
+// })
+
 const loginhandle = (data)=>{
  
 
+  setToken('to_change')
   setNotSigned(false)
   setLoader(data)
   setTimeout(() => {
@@ -51,18 +82,21 @@ const loginhandle = (data)=>{
   setLoader(false)
   }, 2000);
 }
+
   return(
+    <NavigationContainer>
     <SafeAreaView style={{
       flex:1
     }}>
     {/* <KeyboardAvoidingView   behavior="padding" enabled> */}
 
-      {isSigned && <SignedNav />}
+      {isSigned && <SignedNav myInitialParams={{token:token,LoadHandler:LoadHandler}} />}
       {notSigned && <UnSignedNav loginHandle={loginhandle}/>}
       {loader && <EntrancePage/>}
       {/* <Text>hello world</Text> */}
     {/* </KeyboardAvoidingView> */}
     </SafeAreaView >
+    </NavigationContainer>
   )
 }
 

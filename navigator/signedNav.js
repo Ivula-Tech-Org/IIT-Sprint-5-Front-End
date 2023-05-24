@@ -1,21 +1,25 @@
 import {Text} from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import Locator from '../components/locator'
 import HomeNav from './homeNav'
-import Home from '../components/home'
+import Home from '../components/home/home'
 import Chat from '../components/chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import SignIn from '../components/signIn'
+import { useEffect } from 'react'
+import Confirm from '../components/confirm'
+import CallChat from '../components/callChat'
 
-const SignedNav = ()=>{
+const SignedNav = ({myInitialParams})=>{
     const Stack = createNativeStackNavigator()
+    const {token,LoadHandler} = myInitialParams
+    const loadInstance = new LoadHandler()
+
+    const navigation = useNavigation()
     return(
         
-        <NavigationContainer 
-        documentTitle={false}
-        >
             <Stack.Navigator
             initialRouteName='HomeCast'
             screenOptions={{
@@ -25,11 +29,10 @@ const SignedNav = ()=>{
             }}
             
             >
-                <Stack.Screen name='Locator' component={Locator}/>
-                <Stack.Screen name='HomeCast' component={HomeNav}/>
-                <Stack.Screen name='Chat' component={Chat}/>
+                <Stack.Screen name='Locator'  component={Locator}/>
+                <Stack.Screen name='HomeCast' initialParams={{token:token,LoadHandler:LoadHandler}} component={HomeNav}/>
             </Stack.Navigator>
-        </NavigationContainer>
+        
         
     )
 }

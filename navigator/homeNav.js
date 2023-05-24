@@ -1,14 +1,18 @@
 import { View, Text, KeyboardAvoidingView } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Home from '../components/home'
+import HomeStack from '../components/home'
 import Chat from '../components/chat'
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useEffect } from 'react'
 import { COLORS } from '../components/globals/theme'
 import Profile from '../components/profile'
-const HomeNav = () => {
+import Search from '../components/search'
+import Orders from '../components/orders'
+import Cart from '../components/cart/cart'
+import CartStack from '../components/cart'
+const HomeNav = ({route}) => {
     const Tab = createBottomTabNavigator()
     // useEffect(() => {
     //     const loadFont = async () => {
@@ -18,13 +22,14 @@ const HomeNav = () => {
     //     }
     //     loadFont
     // })
-
+    const {token,LoadHandler} = route.params
+    console.log('ths',LoadHandler)
     return (
         <View style={{
             flex: 1
         }}>
             <Tab.Navigator
-            initialRouteName='Profile'
+            initialRouteName='Home'
                 screenOptions={({ route }) => ({
 
                     headerShown: false,
@@ -39,22 +44,24 @@ const HomeNav = () => {
                     ),
                     keyboardHidesTabBar: true
                 }
-                } />
-                <Tab.Screen name='Order' component={Home} options={{
+                } 
+                initialParams={{token:token,LoadHandler:LoadHandler}}
+                />
+                <Tab.Screen name='Order' component={Orders} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='reader' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='reader-outline' size={20} />
                     ),
                     keyboardHidesTabBar: true
                 }
                 } />
-                <Tab.Screen name='Home' component={Home} options={{
+                <Tab.Screen name='Home' component={HomeStack} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='home' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='home-outline' size={20} />
                     ),
                     keyboardHidesTabBar: true
                 }
                 } />
-                <Tab.Screen name='Search' component={Home} options={{
+                <Tab.Screen name='Search' component={Search} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='search' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='search-outline' size={20} />
                     ),
@@ -62,7 +69,7 @@ const HomeNav = () => {
                 }
                 } />
 
-                <Tab.Screen name='Cart' component={Home} options={{
+                <Tab.Screen name='Cart' component={CartStack} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='cart' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='cart-outline' size={20} />
                     ),
