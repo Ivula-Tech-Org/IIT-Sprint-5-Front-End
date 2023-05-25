@@ -7,12 +7,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { useState } from 'react'
 import { COLORS } from '../globals/theme'
 
-const Station = ({navigation}) => {
+const Station = ({ navigation }) => {
     const [filtering, setFiltering] = useState(false)
     const [filterName, setFilterName] = useState('')
     const [filterBox, setFilterBox] = useState(false)
-    const [options, setOptions] = useState(true)
-    const [alertBox, setAlertBox] = useState(true)
+    const [options, setOptions] = useState(false)
+    const [alertBox, setAlertBox] = useState(false)
     const filterAlert = (catName) => {
         setFilterName(catName)
         setFilterBox(false)
@@ -140,10 +140,10 @@ const Station = ({navigation}) => {
 
                 </Text>
                 <Deals dealData={dummDeals}
-                onClick={()=>{
-                    setAlertBox(true)
+                    onClick={() => {
+                        setAlertBox(true)
 
-                }}
+                    }}
                 />
             </View>
             {options &&
@@ -169,10 +169,10 @@ const Station = ({navigation}) => {
                                     width: 200,
                                     padding: 20
                                 }}>
-                                    <View 
-                                    style={{
-                                        flexDirection:'row'
-                                    }}
+                                    <View
+                                        style={{
+                                            flexDirection: 'row'
+                                        }}
                                     >
                                         <Text style={{
                                             fontWeight: 'bold',
@@ -180,43 +180,43 @@ const Station = ({navigation}) => {
                                         }}>Weight : </Text>
                                         <IconButton icon={'remove-outline'} size={{ box: 20, size: 23 }} custom={{
                                             padding: 1,
-                                            marginLeft:10
+                                            marginLeft: 10
                                         }} />
                                         <Text style={{
                                             fontWeight: 'bold',
-                                            marginLeft:7
+                                            marginLeft: 7
                                         }}>20
                                         </Text>
                                         <IconButton icon={'add-outline'} size={{ box: 20, size: 23 }} custom={{
-                                            marginLeft:7,
+                                            marginLeft: 7,
                                             padding: 1
                                         }} />
                                     </View>
 
-                                    <TouchableOpacity 
-                                    onPress={()=>{
-                                        setOptions(false)
-                                        setAlertBox(true)
-                                    }}
-                                    style={{
-                                        marginTop:'20%'
-                                    }}
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setOptions(false)
+                                            setAlertBox(true)
+                                        }}
+                                        style={{
+                                            marginTop: '20%'
+                                        }}
                                     >
                                         <MenuContainer
-                                        custom={{
-                                            backgroundColor:COLORS.primary
-                                        }}
-                                        RenderItem={()=>{
-                                            return(
-                                                <Text style={{
-                                                    textAlign:'center'
-                                                    ,color:'white'
-                                                    ,fontWeight:'bold'
-                                                }}>Add To Cart</Text>
-                                            )
-                                        }}
+                                            custom={{
+                                                backgroundColor: COLORS.primary
+                                            }}
+                                            RenderItem={() => {
+                                                return (
+                                                    <Text style={{
+                                                        textAlign: 'center'
+                                                        , color: 'white'
+                                                        , fontWeight: 'bold'
+                                                    }}>Add To Cart</Text>
+                                                )
+                                            }}
                                         />
-                                        </TouchableOpacity>
+                                    </TouchableOpacity>
                                 </View>
                             )
                         }}
@@ -225,7 +225,7 @@ const Station = ({navigation}) => {
 
             }
 
-{alertBox &&
+            {alertBox &&
                 <View style={{
                     backgroundColor: 'rgba(255,255,255, 0.8)',
                     position: 'absolute',
@@ -249,67 +249,69 @@ const Station = ({navigation}) => {
                                     padding: 20
                                 }}>
                                     <Text>Continue Shopping?</Text>
-                                    <View  
-                                    
-                                    style={{
-                                        marginTop:'20%',
-                                        flexDirection:'row',
-                                        alignItems:'center',
-                                        justifyContent:'center'
-                                    }}
-                                    >
-                                    <TouchableOpacity 
-                                    onPress={()=>{
-                                        setAlertBox(false)
-                                        setOptions(false)
-                                    }}
-                                    style={{
-                                        width:'60%'
-                                    }}
-                                    >
-                                        <MenuContainer
-                                        custom={{
-                                            backgroundColor:COLORS.primary
+                                    <View
+
+                                        style={{
+                                            marginTop: '20%',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}
-                                        RenderItem={()=>{
-                                            return(
-                                                <Text style={{
-                                                    textAlign:'center'
-                                                    ,color:'white'
-                                                    ,fontWeight:'bold'
-                                                }}>Continue</Text>
-                                            )
-                                        }}
-                                        />
+                                    >
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                setAlertBox(false)
+                                                setOptions(false)
+                                            }}
+                                            style={{
+                                                width: '60%'
+                                            }}
+                                        >
+                                            <MenuContainer
+                                                custom={{
+                                                    backgroundColor: COLORS.primary
+                                                    ,borderRadius:7
+                                                }}
+                                                RenderItem={() => {
+                                                    return (
+                                                        <Text style={{
+                                                            textAlign: 'center'
+                                                            , color: 'white'
+                                                            , fontWeight: 'bold'
+                                                        }}>Continue</Text>
+                                                    )
+                                                }}
+                                            />
                                         </TouchableOpacity>
 
-                                    <TouchableOpacity 
-                                    onPress={()=>{
-                                        setAlertBox(false)
-                                        setOptions(false)
-                                        navigation.navigate('Cart')
-                                    }}
-                                    style={{
-                                        width:'60%',
-                                        marginLeft:10
-                                    }}
-                                    >
-                                        <MenuContainer
-                                        custom={{
-                                            backgroundColor:COLORS.primary
-                                        }}
-                                        RenderItem={()=>{
-                                            return(
-                                                <Text style={{
-                                                    textAlign:'center'
-                                                    ,color:'white'
-                                                    ,fontWeight:'bold'
-                                                }}>Cart</Text>
-                                            )
-                                        }}
-                                        />
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                setAlertBox(false)
+                                                setOptions(false)
+                                                navigation.navigate('Cart')
+                                            }}
+                                            style={{
+                                                width: '60%',
+                                                marginLeft: 10
+                                            }}
+                                        >
+                                            <MenuContainer
+                                                custom={{
+                                                    backgroundColor: COLORS.primary
+                                                    ,borderRadius:7
+                                                }}
+                                                RenderItem={() => {
+                                                    return (
+                                                        <Text style={{
+                                                            textAlign: 'center'
+                                                            , color: 'white'
+                                                            , fontWeight: 'bold'
+                                                        }}>Cart</Text>
+                                                    )
+                                                }}
+                                            />
                                         </TouchableOpacity>
-                                        </View>
+                                    </View>
                                 </View>
                             )
                         }}

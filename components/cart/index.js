@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import {View,Text} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Home from './home'
 import Station from '../station'
 import Cart from './cart'
 import Chat from '../chat'
@@ -13,7 +12,7 @@ const CartStack = ()=>{
     return(
         
         <Stack.Navigator
-        initialRouteName='Cartie'
+        initialRouteName='Confirm'
         screenOptions={{
             headerShown:false
         }}

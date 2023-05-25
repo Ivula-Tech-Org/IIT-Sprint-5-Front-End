@@ -9,8 +9,7 @@ import { useEffect } from 'react'
 import { COLORS } from '../components/globals/theme'
 import Profile from '../components/profile'
 import Search from '../components/search'
-import Orders from '../components/orders'
-import Cart from '../components/cart/cart'
+import OrdersStack from '../components/orders'
 import CartStack from '../components/cart'
 const HomeNav = ({route}) => {
     const Tab = createBottomTabNavigator()
@@ -29,7 +28,7 @@ const HomeNav = ({route}) => {
             flex: 1
         }}>
             <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName='Cart'
                 screenOptions={({ route }) => ({
 
                     headerShown: false,
@@ -47,7 +46,7 @@ const HomeNav = ({route}) => {
                 } 
                 initialParams={{token:token,LoadHandler:LoadHandler}}
                 />
-                <Tab.Screen name='Order' component={Orders} options={{
+                <Tab.Screen name='Order' component={OrdersStack} options={{
                     tabBarIcon: ({ focused, color, size }) => (
                         focused ? <Ionicons name='reader' color={COLORS.primary} size={20} /> : <Ionicons color={COLORS.primary} name='reader-outline' size={20} />
                     ),

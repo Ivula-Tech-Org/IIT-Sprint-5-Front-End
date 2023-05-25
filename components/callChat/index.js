@@ -75,8 +75,8 @@ console.log('user login')
             }
 
             const suppRegion = {
-                latitude: -1.3198768,
-                longitude: 36.8998693,
+                latitude: -1.2590906,
+                longitude: 36.7858022,
                 latitudeDelta: 0.02,
                 longitudeDelta: 0.02
               }

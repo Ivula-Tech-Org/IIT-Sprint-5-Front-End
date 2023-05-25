@@ -436,10 +436,8 @@ const MenuContainer = ({ RenderItem, custom }) => {
         </View>
     )
 }
-const GasPlate = ({ custom, dataList, config }) => {
-    const navigation = config.navigation
-    const navTo = config.to
-
+const GasPlate = ({ custom, onClick, dataList, config }) => {
+  
     return (
         <Container
             custom={custom}
@@ -473,7 +471,8 @@ const GasPlate = ({ custom, dataList, config }) => {
                                 return (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            navigation.navigate(navTo, { item })
+                                           config && config.navigation.navigate('Chat', { item })
+                                           onClick && onClick()
                                         }}
                                         style={{
                                             width: '90%',
@@ -597,8 +596,8 @@ const Maps = ({ withRef,tracer, withMarker, initialRegion, currRegion, custom })
                         <Marker
                             coordinate={{
                                 // latitude: currRegion.latitude,
-                                latitude: -1.3198768,
-                                longitude: 36.8998693,
+                                latitude: -1.2590906,
+                                longitude: 36.7858022,
 
 
                                 // longitude: currRegion.longitude,
@@ -613,14 +612,14 @@ const Maps = ({ withRef,tracer, withMarker, initialRegion, currRegion, custom })
         </View>
     )
 }
-const Deals = ({onClick,dealData})=>{
+const Deals = ({custom,onClick,dealData})=>{
     return(
         <>
         <FlatList
         // scrollEnabled={true}
-        style={{
+        style={[{
             height:'30%',
-        }}
+        },custom]}
         contentContainerStyle={{
             paddingBottom:50
         }}

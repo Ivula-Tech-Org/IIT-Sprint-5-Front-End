@@ -1,90 +1,27 @@
-import React from "react";
-import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
-// import Icon from "react-native-ionicons";
-import Iconicons from '@expo/vector-icons/Ionicons'
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Locator from "../locator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { CategBar, Container, GasPlate, HeaderBar, ListGas, MenuContainer, SearchBar } from "../globals/utils";
-import { gasLift, gasWin } from "../globals/images";
-import { COLORS } from "../globals/theme";
-const Orders = ({ navigation }) => {
-    const dummyList = [{ gasName: 'Total', gasImage: gasWin }, { gasName: 'Kgas', gasImage: gasWin }]
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {View,Text} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-    return (
-        //  <KeyboardAvoidingView   behavior="padding" enabled> 
+import Chat from '../chat'
+import Orders from './orders'
+
+const OrdersStack = ()=>{
+    const Stack = createNativeStackNavigator()
+    return(
+        
+        <Stack.Navigator
+        initialRouteName='Orders'
+        screenOptions={{
+            headerShown:false
+        }}
+        >
+            <Stack.Screen name='Orders' component={Orders}/>
+            <Stack.Screen name='Chat' component={Chat}/>
+           
 
 
-        <SafeAreaView style={{
-            // backgroundColor:'red'
-        }}>
-            <HeaderBar text={'Orders'} />
-            
-<GasPlate
-custom={{
-    height:'70%'
-}}
-
-dataList={dummyList}
-config={{navigation:navigation,to:'Chat'}}
-/>
-<Container 
-custom={{
-    // height:20
-    marginTop:'-7%'
-}}
-RenderItem={() => {
-    return (
-        <View style={{
-            // alignItems: 'center',
-            // borderWidth:1
-        }}>
-            <Text style={{
-                fontSize:15,
-            }}>waiting time : 20 min</Text>
-            <Text
-            style={{
-                marginTop:'5%'
-                ,fontSize:12
-            }}
-            >Total</Text>
-            <Text
-            style={{
-                fontSize:20,
-                fontWeight:'bold'
-                ,color:COLORS.primary
-            }}
-            >2000 /=</Text>
-            <MenuContainer 
-            custom={{
-                width:100,
-                alignItems:'center',
-                borderRadius:10,
-                alignSelf:'flex-end',
-                marginRight:'10%'
-            }}
-            RenderItem={()=>{
-                return(
-                    <TouchableOpacity>
-                        <Text 
-                        style={{
-                            fontWeight:'bold',
-                            color:COLORS.primary
-                        }}
-                        >Reach Out</Text>
-                    </TouchableOpacity>
-                )
-            }}
-            />
-        </View>
-    )
-}}
-/>
-        </SafeAreaView>
-        // </KeyboardAvoidingView>
-
+        </Stack.Navigator>
     )
 }
 
-export default Orders
+export default OrdersStack

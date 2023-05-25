@@ -10,11 +10,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { gasLift } from '../globals/images'
 import jwtDecode from 'jwt-decode'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 const Confirm = ({ navigation }) => {
   const [currRegion, setCurrRegion] = useState({
-    latitude: -1.3198768,
-    longitude: 36.8998693
+    latitude:  -1.2590906,
+    longitude: 36.7858022
   })
   const [error, setError] = useState();
   const [initialRegion, setInitialRegion] = useState()
@@ -73,8 +74,8 @@ const Confirm = ({ navigation }) => {
               longitudeDelta: 0.02
             }
             const suppRegion = {
-              latitude: -1.3198768,
-              longitude: 36.8998693,
+              latitude: -1.2590906,
+              longitude: 36.7858022,
               latitudeDelta: 0.02,
               longitudeDelta: 0.02
             }
@@ -117,23 +118,58 @@ const Confirm = ({ navigation }) => {
         currRegion={currRegion}
         tracer={true}
         custom={{
-          height: '60%'
+          height: '57%'
         }}
       />
-      <IconButton onClick={() => {
-        setRefreshMap(true)
-      }} icon={'refresh'} size={{ box: 30, icon: 15 }} custom={{
+      <View style={{
         marginTop: '-25%',
         alignSelf: 'flex-end',
         marginRight: '10%',
-        backgroundColor: 'white'
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center'
+      }}>
+        <View>
+          <TouchableOpacity
+          style={{
+            marginRight:10
+          }}
+          >
+            <MenuContainer 
+            custom={{
+              width:80
+              ,borderRadius:10,
+              justifyContent:'center'
+              ,alignItems:'center',
+              backgroundColor:'white',
+              borderColor:COLORS.primary
+            }}
+            RenderItem={()=>{
+              return(
+                <Text 
+                style={{
+                  fontWeight:'bold',
+                  colors:COLORS.primary
+                }}
+                >change?</Text>
+              )
+            }}
+            />
+
+          </TouchableOpacity>
+        </View>
+      <IconButton onClick={() => {
+        setRefreshMap(true)
+      }} icon={'refresh'} size={{ box: 30, icon: 15 }} custom={{
+        backgroundColor:'white'
       }} />
+      </View>
 
       <Container
 
         custom={{
           marginTop: '3%',
-          height: '47%'
+          height: '51%'
         }}
         RenderItem={() => {
           return (
@@ -214,7 +250,7 @@ const Confirm = ({ navigation }) => {
                           <TouchableOpacity
 
                             onPress={() => {
-                              navigation.navigate('HomeCast')
+                              navigation.navigate('Cartie')
                             }}
                           >
                             <Text>cancel</Text>
