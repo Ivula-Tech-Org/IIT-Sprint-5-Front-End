@@ -8,7 +8,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const Locator = ({ navigation }) => {
+const ConfirmLocation = ({ navigation }) => {
   const [currRegion, setCurrRegion] = useState({
     latitude: -1.3198768,
     longitude: 36.8998693
@@ -54,7 +54,7 @@ const Locator = ({ navigation }) => {
 
 //   },[])
   const skipLocator = () => {
-    navigation.navigate('HomeCast')
+    navigation.goBack()
   }
   useEffect(() => {
 (async () => {
@@ -139,12 +139,12 @@ const Locator = ({ navigation }) => {
         {loader && <ActivityIndicator color={COLORS.primary} style={{
           marginBottom: 10
         }} />}
-        <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} submit={setLocator} />
-        <LongButtonLight text={'Set Latter'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
+        <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} />
+        <LongButtonLight text={'Cancel'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
 
       </View>
     </SafeAreaView>
   )
 }
 
-export default Locator
+export default ConfirmLocation

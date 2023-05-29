@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "IIT-Sprint-5-Front-End",
+    "name": "Gass Link",
     "slug": "IIT-Sprint-5-Front-End",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mcshelton.GassLink"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "736c77b7-ff4a-4ed3-9b9e-443b0f2c9b7c"
+      }
     }
   }
 }

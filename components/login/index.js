@@ -7,9 +7,8 @@ import { fillGas } from '../globals/images'
 import { useEffect, useState } from 'react'
 import { COLORS } from '../globals/theme'
 import axios from 'axios'
-import jwtDecode from 'jwt-decode'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as RNRestart  from 'react-native-restart'
+
 const Login = ({ navigation,route }) => {
     const [loader, setLoader] = useState(false)
     const [checker, setChecker] = useState()

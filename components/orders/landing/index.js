@@ -1,14 +1,9 @@
 import React from "react";
-import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
-// import Icon from "react-native-ionicons";
-import Iconicons from '@expo/vector-icons/Ionicons'
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Locator from "../locator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList, Linking } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CategBar, Container, GasPlate, HeaderBar, ListGas, MenuContainer, SearchBar } from "../globals/utils";
-import { gasLift, gasWin } from "../globals/images";
-import { COLORS } from "../globals/theme";
+import { CategBar, Container, GasPlate, HeaderBar, ListGas, MenuContainer, SearchBar } from "../../globals/utils";
+import { gasLift, gasWin } from "../../globals/images";
+import { COLORS } from "../../globals/theme";
 const Orders = ({ navigation }) => {
     const dummyList = [{ gasName: 'Total', gasImage: gasWin }, { gasName: 'Kgas', gasImage: gasWin }]
 
@@ -19,7 +14,7 @@ const Orders = ({ navigation }) => {
         <SafeAreaView style={{
             // backgroundColor:'red'
         }}>
-            <HeaderBar text={'Orders'} />
+            <HeaderBar text={'Orders'} source={gasWin}/>
             
 <GasPlate
 custom={{
@@ -66,7 +61,11 @@ RenderItem={() => {
             }}
             RenderItem={()=>{
                 return(
-                    <TouchableOpacity>
+                    <TouchableOpacity 
+                    onPress={()=>{
+                        Linking.openURL('https://rumaretreat.org')
+                    }}
+                    >
                         <Text 
                         style={{
                             fontWeight:'bold',

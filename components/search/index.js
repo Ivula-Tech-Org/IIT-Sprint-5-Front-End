@@ -1,10 +1,5 @@
 import React from "react";
 import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
-// import Icon from "react-native-ionicons";
-import Iconicons from '@expo/vector-icons/Ionicons'
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Locator from "../locator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CategBar, Container, Deals, GasPlate, HeaderBar, ListGas, SearchBar } from "../globals/utils";
 import { gasLift, gasWin } from "../globals/images";
@@ -19,7 +14,7 @@ const Search = ({ navigation }) => {
         <SafeAreaView style={{
             // backgroundColor:'red'
         }}>
-            <HeaderBar text={'Search'} />
+            <HeaderBar text={'Search'} source={gasWin} />
             <SearchBar searchLogic={() => {
                 console.log('mkuu')
             }} custom={{

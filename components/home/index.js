@@ -1,7 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import {View,Text} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Home from './home'
+import Home from './landing'
 import Station from '../station'
 
 const HomeStack = ()=>{

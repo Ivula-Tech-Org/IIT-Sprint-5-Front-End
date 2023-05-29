@@ -1,24 +1,82 @@
 import { View, Text, Touchable, TouchableOpacity, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Banner, Deals, IconButton, MenuContainer } from '../globals/utils'
+import { AlertBox, Banner, Deals, IconButton, MenuContainer, Options } from '../globals/utils'
 import { fillGas } from '../globals/images'
 import utilStyles from '../globals/utils/utilStyles'
 import { Ionicons } from '@expo/vector-icons'
-import { useState } from 'react'
-import { COLORS } from '../globals/theme'
+import { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import jwtDecode from 'jwt-decode'
+import axios from 'axios'
 
-const Station = ({ navigation }) => {
+const Station = ({ navigation, route }) => {
     const [filtering, setFiltering] = useState(false)
     const [filterName, setFilterName] = useState('')
     const [filterBox, setFilterBox] = useState(false)
     const [options, setOptions] = useState(false)
     const [alertBox, setAlertBox] = useState(false)
+    const [gassList, setGassList] = useState([])
+    const [accList, setAccList] = useState([])
+    const [categList, setCategList] = useState([])
+    const { user, station, token } = route.params
+    const [size, setSize] = useState()
+    const [selected, setSelected] = useState()
     const filterAlert = (catName) => {
         setFilterName(catName)
         setFilterBox(false)
     }
+    const closePop = () => {
 
+        setAlertBox(false)
+        setOptions(false)
+    }
+    const alertPop = () => {
+
+        setOptions(false)
+        setAlertBox(true)
+    }
+    const navTo = () => {
+
+        setAlertBox(false)
+        setOptions(false)
+        navigation.navigate('Cart')
+    }
     const dummDeals = ['dummy_1', 'dummy_2', 'dummy_3', 'dummy_4', 'dummy_5']
+
+
+    useEffect(() => {
+        (async () => {
+
+            try {
+
+                axios.get('http://192.168.43.102:8000/front_end_service/gasService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                    .then(async (res) => {
+                        setGassList(res.data.data)
+                        console.log('gass list', res.data.data)
+
+                    }).catch((err) => {
+                        alert('Sorry an error occured')
+                        console.log(err)
+
+                    })
+
+                axios.get('http://192.168.43.102:8000/front_end_service/AccService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                    .then(async (res) => {
+                        setAccList(res.data.data)
+                        console.log('gass list', res.data.data)
+
+                    }).catch((err) => {
+                        alert('Sorry an error occured')
+
+                    })
+            } catch (err) {
+                alert('something went wrong')
+                console.log(err)
+            }
+        })()
+
+    }, [])
+
     return (
         <SafeAreaView
             style={[utilStyles.safeARea]}
@@ -127,9 +185,11 @@ const Station = ({ navigation }) => {
 
                 </Text>
                 {/* <ScrollView> */}
-                <Deals onClick={() => {
+                <Deals onClick={(item) => {
                     setOptions(true)
-                }} dealData={dummDeals} />
+                    setSelected(item)
+                    console.log('clicked', item)
+                }} dealData={gassList} />
                 {/* </ScrollView> */}
 
                 <Text style={{
@@ -139,184 +199,58 @@ const Station = ({ navigation }) => {
                     Gass Accessories  {filtering && <>({filterName})</>}
 
                 </Text>
-                <Deals dealData={dummDeals}
+                <Deals dealData={accList}
                     onClick={() => {
-                        setAlertBox(true)
+                        setOptions(true)
 
                     }}
                 />
             </View>
             {options &&
-                <View style={{
-                    backgroundColor: 'rgba(255,255,255, 0.8)',
-                    position: 'absolute',
-                    height: '105%',
-                    width: '100%',
-                    zIndex: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <MenuContainer
-                        custom={{
-                        }}
+                <Options add={() => {
+                    // const index = selected.weightRange.map(item=>item.size).indexOf(size)
+                    let index = 0
+                    selected.weightRange.forEach((item, ind) => {
+                        if (size == item.size) {
+                            index = ind
+                        }
 
-                        RenderItem={() => {
-                            return (
-                                <View style={{
-                                    backgroundColor: 'white'
-                                    // ,flex:1
-                                    , height: 100,
-                                    width: 200,
-                                    padding: 20
-                                }}>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row'
-                                        }}
-                                    >
-                                        <Text style={{
-                                            fontWeight: 'bold',
-                                            color: COLORS.primary
-                                        }}>Weight : </Text>
-                                        <IconButton icon={'remove-outline'} size={{ box: 20, size: 23 }} custom={{
-                                            padding: 1,
-                                            marginLeft: 10
-                                        }} />
-                                        <Text style={{
-                                            fontWeight: 'bold',
-                                            marginLeft: 7
-                                        }}>20
-                                        </Text>
-                                        <IconButton icon={'add-outline'} size={{ box: 20, size: 23 }} custom={{
-                                            marginLeft: 7,
-                                            padding: 1
-                                        }} />
-                                    </View>
+                    });
 
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            setOptions(false)
-                                            setAlertBox(true)
-                                        }}
-                                        style={{
-                                            marginTop: '20%'
-                                        }}
-                                    >
-                                        <MenuContainer
-                                            custom={{
-                                                backgroundColor: COLORS.primary
-                                            }}
-                                            RenderItem={() => {
-                                                return (
-                                                    <Text style={{
-                                                        textAlign: 'center'
-                                                        , color: 'white'
-                                                        , fontWeight: 'bold'
-                                                    }}>Add To Cart</Text>
-                                                )
-                                            }}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                        }}
-                    />
-                </View>
+                    console.log(selected.weightRange[3], index, selected.weightRange.length)
+                    {
+                        index < selected.weightRange.length -1 ?
+                        setSize(selected.weightRange[index + 1].size) : setSize(selected.weightRange[selected.weightRange.length-1].size)
+                    }
+                }} 
+                remove={() => {
+                    // const index = selected.weightRange.map(item=>item.size).indexOf(size)
+                    let index = 0
+                    selected.weightRange.forEach((item, ind) => {
+                        if (size == item.size) {
+                            index = ind
+                        }
 
+                    });
+
+                    console.log(selected.weightRange[3], index, selected.weightRange.length)
+                    {
+                        index >0?
+                        setSize(selected.weightRange[index - 1].size) : setSize(selected.weightRange[0].size)
+                    }
+                }}
+                size={size ? size : selected.weightRange[0].size} closePop={closePop} alertPop={alertPop} />
             }
 
-            {alertBox &&
-                <View style={{
-                    backgroundColor: 'rgba(255,255,255, 0.8)',
-                    position: 'absolute',
-                    height: '105%',
-                    width: '100%',
-                    zIndex: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <MenuContainer
-                        custom={{
-                        }}
+            {alertBox && <AlertBox
+                closePop={closePop}
+                options={{ main: 'Item Added. Continue shoping or go to cart', left: 'Continue', right: 'Cart' }}
+                navTo={navTo}
+                onClick={()=>{
+                    alert()
+                }}
 
-                        RenderItem={() => {
-                            return (
-                                <View style={{
-                                    backgroundColor: 'white'
-                                    // ,flex:1
-                                    , height: 100,
-                                    width: 200,
-                                    padding: 20
-                                }}>
-                                    <Text>Continue Shopping?</Text>
-                                    <View
-
-                                        style={{
-                                            marginTop: '20%',
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'center'
-                                        }}
-                                    >
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                setAlertBox(false)
-                                                setOptions(false)
-                                            }}
-                                            style={{
-                                                width: '60%'
-                                            }}
-                                        >
-                                            <MenuContainer
-                                                custom={{
-                                                    backgroundColor: COLORS.primary
-                                                    ,borderRadius:7
-                                                }}
-                                                RenderItem={() => {
-                                                    return (
-                                                        <Text style={{
-                                                            textAlign: 'center'
-                                                            , color: 'white'
-                                                            , fontWeight: 'bold'
-                                                        }}>Continue</Text>
-                                                    )
-                                                }}
-                                            />
-                                        </TouchableOpacity>
-
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                setAlertBox(false)
-                                                setOptions(false)
-                                                navigation.navigate('Cart')
-                                            }}
-                                            style={{
-                                                width: '60%',
-                                                marginLeft: 10
-                                            }}
-                                        >
-                                            <MenuContainer
-                                                custom={{
-                                                    backgroundColor: COLORS.primary
-                                                    ,borderRadius:7
-                                                }}
-                                                RenderItem={() => {
-                                                    return (
-                                                        <Text style={{
-                                                            textAlign: 'center'
-                                                            , color: 'white'
-                                                            , fontWeight: 'bold'
-                                                        }}>Cart</Text>
-                                                    )
-                                                }}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            )
-                        }}
-                    />
-                </View>}
+            />}
         </SafeAreaView>
     )
 }

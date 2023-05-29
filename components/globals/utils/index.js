@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View, ImageBackground, TextInput, Touchable, ScrollView, FlatList, RefreshControl } from "react-native";
+import { TouchableOpacity, Text, View, ImageBackground, TextInput, Touchable, ScrollView, FlatList, RefreshControl, ActivityIndicator } from "react-native";
 import utilStyles from "./utilStyles";
 import { fillGas, gasLift, orders } from "../images";
 import { COLORS } from "../theme";
@@ -123,7 +123,7 @@ const ErrorBox = ({ text }) => {
         </View>
     )
 }
-const HeaderBar = ({ text }) => {
+const HeaderBar = ({ text, source, custom }) => {
     return (
         <View style={{
             padding: 10,
@@ -133,7 +133,7 @@ const HeaderBar = ({ text }) => {
         }}>
 
             <ImageBackground
-                source={gasWin}
+                source={source}
                 style={{
                     height: 50,
                     width: 50,
@@ -144,22 +144,22 @@ const HeaderBar = ({ text }) => {
                 }}>
             </ImageBackground>
             <TouchableOpacity
-                style={{
+                style={[{
 
                     alignSelf: 'flex-end'
                     , left: '20%'
-                }}
+                }]}
             >
                 <Ionicons name="notifications-outline" size={20} />
             </TouchableOpacity>
-            <Text style={{
+            <Text style={[{
                 color: COLORS.primary,
                 fontWeight: 'bold'
                 , fontSize: 18,
                 left: '400%',
                 top: 15
 
-            }}>{text}</Text>
+            }, custom]}>{text}</Text>
 
         </View>
     )
@@ -221,6 +221,16 @@ const CategBar = ({ itemList, handleCat }) => {
                 height: 50,
                 borderColor: COLORS.primary
             }}
+            ListEmptyComponent={() => {
+                return (
+                    <View style={{
+                        justifyContent: 'center',
+                        width: 225
+                    }}>
+                        <ActivityIndicator size={30} color={COLORS.primary} />
+                    </View>
+                )
+            }}
 
             renderItem={(item) => {
                 item = item.item
@@ -235,7 +245,7 @@ const CategBar = ({ itemList, handleCat }) => {
                         }}
                     >
                         <ImageBackground
-                            source={item.gasImage}
+                            source={{ uri: item.gasImage }}
                             style={{
                                 height: 40,
                                 width: 40,
@@ -272,9 +282,7 @@ const Container = ({ custom, RenderItem }) => {
         </View>
     )
 }
-const ListGas = ({ custom, config }) => {
-    const navigation = config.navigation
-    const navTo = config.to
+const ListGas = ({ listGas, custom, onClick }) => {
 
     return (
         <Container
@@ -294,29 +302,38 @@ const ListGas = ({ custom, config }) => {
                             }}
                         >Closest Around you</Text>
                         <FlatList
-                            data={dataList}
+                            data={listGas}
+                            ListEmptyComponent={() => {
+                                return (
+                                    <ActivityIndicator
+                                        size={20}
+                                        color={COLORS.primary}
+                                    />
+                                )
+                            }}
                             style={{
                                 flexDirection: 'column',
                                 // paddingBottom:50
                             }}
                             refreshControl={
-                                <RefreshControl refreshing={false} onRefresh={()=>{
+                                <RefreshControl refreshing={false} onRefresh={() => {
                                     alert('hellow wolrd')
-                                }}/>
+                                }} />
                             }
                             horizontal={false}
                             contentContainerStyle={{
                                 paddingHorizontal: 5,
                                 paddingVertical: 5,
-                                paddingBottom:50
+                                paddingBottom: 50
                             }}
                             numColumns={3}
-                            renderItem={(item) => {
-                                let name = 'shelton omondi kiageasdfadfafd'
+                            renderItem={(inItem) => {
+                                let item = inItem.item
+                                console.log('item', item.stationImage)
                                 return (
                                     <TouchableOpacity
                                         onPress={() => {
-                                            navigation.navigate(navTo, { item })
+                                            onClick(item)
                                         }}
                                         style={{
                                             width: '30%',
@@ -324,12 +341,13 @@ const ListGas = ({ custom, config }) => {
                                             overflow: 'hidden',
                                             marginLeft: '3%',
                                             marginBottom: '5%',
-                                            elevation: 5
+                                            elevation: 5,
+
 
                                         }}
                                     >
                                         <ImageBackground
-                                            source={orders}
+                                            source={{ uri: item.stationImage }}
                                             style={{
                                                 height: 100,
                                                 backgroundColor: 'grey'
@@ -339,24 +357,24 @@ const ListGas = ({ custom, config }) => {
                                             style={{
                                                 backgroundColor: COLORS.primary
                                                 , padding: 10
-                                                , paddingBottom: 5
+                                                , paddingBottom: 5,
                                             }}
                                         >
                                             <Text
                                                 style={{
                                                     color: 'white'
                                                     , fontWeight: 'bold'
-                                                    , fontSize: 10
+                                                    , fontSize: 10,
                                                 }}
 
-                                            >{name.toUpperCase()}</Text>
+                                            >{item.stationName.toUpperCase()}</Text>
                                             <Text
                                                 style={{
                                                     color: 'white',
                                                     fontSize: 8,
                                                     marginTop: -3
                                                 }}
-                                            >nairobi, kenya</Text>
+                                            >{item.town}</Text>
                                             <View
                                                 style={{
                                                     flexDirection: 'row'
@@ -370,7 +388,7 @@ const ListGas = ({ custom, config }) => {
                                                     fontSize: 10,
                                                     marginTop: 5,
                                                     marginLeft: 5
-                                                }}>5</Text>
+                                                }}>{item.stationRating}</Text>
                                             </View>
                                         </View>
 
@@ -437,7 +455,7 @@ const MenuContainer = ({ RenderItem, custom }) => {
     )
 }
 const GasPlate = ({ custom, onClick, dataList, config }) => {
-  
+
     return (
         <Container
             custom={custom}
@@ -471,8 +489,8 @@ const GasPlate = ({ custom, onClick, dataList, config }) => {
                                 return (
                                     <TouchableOpacity
                                         onPress={() => {
-                                           config && config.navigation.navigate('Chat', { item })
-                                           onClick && onClick()
+                                            config && config.navigation.navigate('Chat', { item })
+                                            onClick && onClick()
                                         }}
                                         style={{
                                             width: '90%',
@@ -571,7 +589,7 @@ const GasPlate = ({ custom, onClick, dataList, config }) => {
     )
 }
 
-const Maps = ({ withRef,tracer, withMarker, initialRegion, currRegion, custom }) => {
+const Maps = ({ withRef, tracer, withMarker, initialRegion, currRegion, custom }) => {
     return (
 
         <View style={[{ height: '50%' }, custom]}>
@@ -592,96 +610,325 @@ const Maps = ({ withRef,tracer, withMarker, initialRegion, currRegion, custom })
                         >
 
                         </Marker>
-                        {tracer && 
-                        <Marker
-                            coordinate={{
-                                // latitude: currRegion.latitude,
-                                latitude: -1.2590906,
-                                longitude: 36.7858022,
+                        {tracer &&
+                            <Marker
+                                coordinate={{
+                                    // latitude: currRegion.latitude,
+                                    latitude: -1.2590906,
+                                    longitude: 36.7858022,
 
 
-                                // longitude: currRegion.longitude,
-                            }}
-                            title="Supplier"
-                        >
+                                    // longitude: currRegion.longitude,
+                                }}
+                                title="Supplier"
+                            >
 
-                        </Marker>}
+                            </Marker>}
                     </>
                 }
             </MapView>
         </View>
     )
 }
-const Deals = ({custom,onClick,dealData})=>{
-    return(
+const Deals = ({ custom, onClick, dealData }) => {
+    return (
         <>
-        <FlatList
-        // scrollEnabled={true}
-        style={[{
-            height:'30%',
-        },custom]}
-        contentContainerStyle={{
-            paddingBottom:50
-        }}
-        data={dealData}
-        renderItem={()=>{
-            return(
-                <TouchableOpacity
-                onPress={onClick}
-                style={{
-                    padding:5,
-                    width:'90%',
-                    borderRadius:10,
-                    borderWidth:1,
-                    marginTop:15,
-                    flexDirection:'row'
-
+            <FlatList
+                // scrollEnabled={true}
+                style={[{
+                    height: '30%',
+                }, custom]}
+                contentContainerStyle={{
+                    paddingBottom: 50
                 }}
-                >
-                    <ImageBackground
-                    source={gasLift}
-                    style={{
-                        height:60,
-                        width:60,
-                        overflow:'hidden',
-                        borderWidth:1,
-                        borderRadius:100
-                    }}
-                    />
-                    <View 
-                    
-                    style={{
-                        paddingLeft:20
-                    }}>
-                        <Text style={{
-                            fontSize:15,
-                            color:COLORS.primary,
-                            // fontWeight:'bold'
-                        }}>Gass Refill</Text>
-                        <Text style={{
-                            fontSize:10
-                        }}>40 - 60 kg</Text>
-                        <Text style={{
-                            fontSize:10
-                        }}>22 mins</Text>
-                        <Text style={{
-                            fontSize:12,
-                            left:'180%'
-                        }}>1000/=</Text>
-                    </View>
-                </TouchableOpacity>
-            )
-        }}
-        ListEmptyComponent={()=>{
-            return(
-                <View>
-                    <Text>No Deals here</Text>
-                </View>
-            )
-        }}
-        />
+                data={dealData}
+                renderItem={(inItem) => {
+                    const item = inItem.item
+                    const sizeList = item.weightRange && item.weightRange.map(value => parseInt(value.size))
+                    // const minValue = Math.min(...sizeList) 
+                    const minSize = item.weightRange && Math.min(...sizeList)
+                    const maxSize = item.weightRange && Math.max(...sizeList)
+                    console.log(item.image)
+                    return (
+                        <TouchableOpacity
+                            onPress={()=>{
+                                onClick(item)
+
+                            }}
+                            style={{
+                                padding: 5,
+                                width: '90%',
+                                borderRadius: 10,
+                                borderWidth: 1,
+                                marginTop: 15,
+                                flexDirection: 'row'
+
+                            }}
+                        >
+                            <ImageBackground
+                                source={{ uri: item.image }}
+                                style={{
+                                    height: 60,
+                                    width: 60,
+                                    overflow: 'hidden',
+                                    borderWidth: 1,
+                                    borderRadius: 100
+                                }}
+                            />
+                            <View
+
+                                style={{
+                                    paddingLeft: 20
+                                }}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: COLORS.primary,
+                                    // fontWeight:'bold'
+                                }}>{item.service}</Text>
+                                {item.weightRange && <Text style={{
+                                    fontSize: 10
+                                }}>{minSize} - {maxSize} kg</Text>}
+                                <Text style={{
+                                    fontSize: 10
+                                }}>{item.deliveryTime}</Text>
+                                <Text style={{
+                                    fontSize: 12,
+                                    left: '180%'
+                                }}>{item.price}/=</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )
+                }}
+                ListEmptyComponent={() => {
+                    return (
+                        <View>
+                            <Text>No Deals here</Text>
+                        </View>
+                    )
+                }}
+            />
 
         </>
     )
+
+
 }
-export { IconButton, Maps, MenuContainer, GasPlate, LongButtonDark, Container, ProfileCircle, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar ,Deals}
+
+const Options = ({ size,closePop, onClick, alertPop, add, remove }) => {
+    return (
+        <View style={{
+            backgroundColor: 'rgba(255,255,255, 0.8)',
+            position: 'absolute',
+            height: '105%',
+            width: '100%',
+            zIndex: 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+
+            <IconButton icon='close' size={{ box: 25, size: 20 }}
+                custom={{
+                    marginBottom: 20
+                }}
+                onClick={() => {
+                    {
+                        closePop()
+                    }
+                }} />
+
+            <MenuContainer
+                custom={{
+                }}
+
+                RenderItem={() => {
+                    return (
+                        <View style={{
+                            backgroundColor: 'white'
+                            // ,flex:1
+                            , height: 100,
+                            width: 200,
+                            padding: 20
+                        }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row'
+                                }}
+                            >
+                                <Text style={{
+                                    fontWeight: 'bold',
+                                    color: COLORS.primary
+                                }}>Weight : </Text>
+                                <IconButton
+                                    onClick={remove}
+                                    icon={'remove-outline'} size={{ box: 20, size: 23 }} custom={{
+                                        padding: 1,
+                                        marginLeft: 10
+                                    }} />
+                                <Text style={{
+                                    fontWeight: 'bold',
+                                    marginLeft: 7
+                                }}>{size}
+                                </Text>
+                                <IconButton
+                                    onClick={add}
+                                    icon={'add-outline'} size={{ box: 20, size: 23 }} custom={{
+                                        marginLeft: 7,
+                                        padding: 1
+                                    }} />
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    onClick()
+                                }}
+                                style={{
+                                    marginTop: '20%'
+                                }}
+                            >
+                                <MenuContainer
+                                    custom={{
+                                        backgroundColor: COLORS.primary
+                                    }}
+                                    RenderItem={() => {
+                                        return (
+                                            <Text style={{
+                                                textAlign: 'center'
+                                                , color: 'white'
+                                                , fontWeight: 'bold'
+                                            }}>Add To Cart</Text>
+                                        )
+                                    }}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }}
+            />
+        </View>
+
+
+    )
+}
+const AlertBox = ({ closePop, action, navTo, options }) => {
+    return (
+
+        <View style={{
+            backgroundColor: 'rgba(255,255,255, 0.8)',
+            position: 'absolute',
+            height: '105%',
+            width: '100%',
+            zIndex: 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+            <MenuContainer
+                custom={{
+                }}
+
+                RenderItem={() => {
+                    return (
+                        <View style={{
+                            backgroundColor: 'white'
+                            // ,flex:1
+                            // , height: 100,
+                            , width: 200,
+                            padding: 20
+                        }}>
+                            <Text>{options.main}</Text>
+                            <View
+
+                                style={{
+                                    marginTop: '20%',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        closePop()
+                                    }}
+                                    style={{
+                                        width: '60%'
+                                    }}
+                                >
+                                    <MenuContainer
+                                        custom={{
+                                            backgroundColor: COLORS.primary
+                                            , borderRadius: 7
+                                        }}
+                                        RenderItem={() => {
+                                            return (
+                                                <Text style={{
+                                                    textAlign: 'center'
+                                                    , color: 'white'
+                                                    , fontWeight: 'bold'
+                                                }}>{options.left}</Text>
+                                            )
+                                        }}
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={navTo}
+                                    style={{
+                                        width: '60%',
+                                        marginLeft: 10
+                                    }}
+                                >
+                                    <MenuContainer
+                                        custom={{
+                                            backgroundColor: COLORS.primary
+                                            , borderRadius: 7
+                                        }}
+                                        RenderItem={() => {
+                                            return (
+                                                <Text style={{
+                                                    textAlign: 'center'
+                                                    , color: 'white'
+                                                    , fontWeight: 'bold'
+                                                }}>{options.right}</Text>
+                                            )
+                                        }}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )
+                }}
+            />
+        </View>
+    )
+}
+
+const DashBoardPlate = ({ onClick, title, dig, bcolor }) => {
+    return (
+        <TouchableOpacity
+            style={{
+                padding: 10,
+                borderWidth: 1,
+                width: '45%',
+                borderRadius: 20
+                // marginRight:'5%'
+                , marginTop: '8%'
+                ,
+                backgroundColor: bcolor,
+            }}
+            onPress={onClick}
+        >
+            <Text style={{
+                color: 'white'
+            }}>{title}</Text>
+            <Text
+                style={{
+                    alignSelf: 'center',
+                    fontWeight: 'bold',
+                    fontSize: 50,
+                    color: 'white'
+                }}
+            >{dig}</Text>
+        </TouchableOpacity>
+
+    )
+}
+export { IconButton, DashBoardPlate, AlertBox, Maps, Options, MenuContainer, GasPlate, LongButtonDark, Container, ProfileCircle, ListGas, LongButtonLight, HeaderBar, Banner, Back, SearchBar, ErrorBox, CategBar, Deals }

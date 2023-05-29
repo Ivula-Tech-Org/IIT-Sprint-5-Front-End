@@ -28,7 +28,7 @@ const SignUp = ({ navigation,route }) => {
             {
     
                 console.log(email,userName,password,phoneNumber)
-                axios.post('http://192.168.1.106:8000/auth_service', null,{ params: { type: 'client', userEmail: email,userName:userName,phoneNumber:phoneNumber, password: password} })
+                axios.post('http://192.168.1.7:8000/auth_service', null,{ params: { type: 'client', userEmail: email,userName:userName,phoneNumber:phoneNumber, password: password} })
                 .then(async (res) => {
                     if(res.status = '200'){
                         // console.log(res.data.token)

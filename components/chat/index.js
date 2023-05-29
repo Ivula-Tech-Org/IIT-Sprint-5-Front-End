@@ -1,7 +1,6 @@
 import { useIsFocused } from '@react-navigation/native'
 import { useEffect, useState } from 'react'
 import {ActivityIndicator, ActivityIndicatorBase, ScrollView, Text, TextInput, TouchableOpacity, View} from 'react-native'
-import Icon from 'react-native-ionicons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TypingIndicator } from '../globals/animation'
 import chatStyles from './style'

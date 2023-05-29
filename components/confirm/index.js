@@ -1,18 +1,15 @@
 import { Text, View, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native'
-import MapView, { Marker } from 'react-native-maps'
 import { useEffect, useRef, useState, } from 'react'
 import * as Location from 'expo-location'
 // import locStyles from './style'
 import { Container, ErrorBox, IconButton, LongButtonDark, LongButtonLight, Maps, MenuContainer, ProfileCircle } from '../globals/utils'
 import { COLORS } from '../globals/theme'
-import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { gasLift } from '../globals/images'
 import jwtDecode from 'jwt-decode'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 
-const Confirm = ({ navigation }) => {
+const Confirm = ({ navigation,route }) => {
   const [currRegion, setCurrRegion] = useState({
     latitude:  -1.2590906,
     longitude: 36.7858022
@@ -25,7 +22,7 @@ const Confirm = ({ navigation }) => {
   const MapsRef = useRef(null)
   const [loadUser, setLoadUser] = useState(false)
   const [refreshMap, setRefreshMap] = useState((false))
-
+  const {currPage,chatPage,nextPage}= route.params
   const skipLocator = () => {
     navigation.navigate('HomeCast')
   }
@@ -129,10 +126,13 @@ const Confirm = ({ navigation }) => {
         justifyContent:'center',
         alignItems:'center'
       }}>
-        <View>
+        {currPage != 'Dashboard' && <View>
           <TouchableOpacity
           style={{
             marginRight:10
+          }}
+          onPress={()=>{
+            navigation.navigate('Location')
           }}
           >
             <MenuContainer 
@@ -157,7 +157,7 @@ const Confirm = ({ navigation }) => {
             />
 
           </TouchableOpacity>
-        </View>
+        </View>}
       <IconButton onClick={() => {
         setRefreshMap(true)
       }} icon={'refresh'} size={{ box: 30, icon: 15 }} custom={{
@@ -227,7 +227,7 @@ const Confirm = ({ navigation }) => {
                         <TouchableOpacity
 
                           onPress={() => {
-                            navigation.navigate('CallChat')
+                            navigation.navigate(nextPage,{currPage:currPage, nextPage:chatPage})
                           }}
                         >
                           <Text>confirm</Text>
@@ -250,7 +250,7 @@ const Confirm = ({ navigation }) => {
                           <TouchableOpacity
 
                             onPress={() => {
-                              navigation.navigate('Cartie')
+                              navigation.navigate(currPage)
                             }}
                           >
                             <Text>cancel</Text>

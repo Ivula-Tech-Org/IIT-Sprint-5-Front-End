@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
-// import Icon from "react-native-ionicons";
-import Iconicons from '@expo/vector-icons/Ionicons'
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Locator from "../locator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Text,  TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CategBar, Container, GasPlate, HeaderBar, ListGas, MenuContainer, SearchBar } from "../globals/utils";
-import { gasLift, gasWin } from "../globals/images";
-import { COLORS } from "../globals/theme";
+import {  Container, GasPlate, HeaderBar, ListGas, MenuContainer, SearchBar } from "../../globals/utils";
+import { gasLift, gasWin } from "../../globals/images";
+import { COLORS } from "../../globals/theme";
 const Cart = ({ navigation }) => {
     const dummyList = [{ gasName: 'Total', gasImage: gasWin }, { gasName: 'Kgas', gasImage: gasWin }]
     const [alertBox,setAlertBox] = useState(false)
@@ -20,7 +15,7 @@ const Cart = ({ navigation }) => {
         <SafeAreaView style={{
             // backgroundColor:'red'
         }}>
-            <HeaderBar text={'Cart'} />
+            <HeaderBar text={'Cart'} source={gasLift}/>
             
 <GasPlate
 custom={{
@@ -71,7 +66,7 @@ RenderItem={() => {
                 return(
                     <TouchableOpacity
                     onPress={()=>{
-                        navigation.navigate('Confirm')
+                        navigation.navigate('Confirm',{currPage:'Cart', chatPage:'Chat', nextPage:'CallChat'})
                     }}
                     >
                         <Text 

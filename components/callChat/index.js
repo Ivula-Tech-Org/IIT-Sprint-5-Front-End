@@ -1,18 +1,13 @@
-import { Text, View, ActivityIndicator, TextInput, TouchableOpacity, Linking } from 'react-native'
-import MapView, { Marker } from 'react-native-maps'
+import { Text, View, ActivityIndicator, TouchableOpacity, Linking } from 'react-native'
 import { useEffect, useRef, useState, } from 'react'
 import * as Location from 'expo-location'
-// import locStyles from './style'
-import { Container, ErrorBox, IconButton, LongButtonDark, LongButtonLight, Maps, MenuContainer, ProfileCircle } from '../globals/utils'
-import { COLORS } from '../globals/theme'
-import axios from 'axios'
+import { Container, IconButton, Maps, MenuContainer, ProfileCircle } from '../globals/utils'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { gasLift } from '../globals/images'
 import jwtDecode from 'jwt-decode'
-import { Link } from '@react-navigation/native'
 
-const CallChat = ({ navigation }) => {
+const CallChat = ({ navigation ,route}) => {
   const [currRegion, setCurrRegion] = useState({
     latitude: -1.3198768,
     longitude: 36.8998693
@@ -25,7 +20,7 @@ const CallChat = ({ navigation }) => {
   const MapsRef = useRef(null)
   const [loadUser, setLoadUser] = useState(false)
   const [refreshMap,setRefreshMap] = useState((false))
-
+  const {currPage,nextPage} = route.params
   const skipLocator = () => {
     navigation.navigate('HomeCast')
   }
@@ -120,7 +115,7 @@ setRefreshMap(false)
         currRegion={currRegion}
         tracer={true}
         custom={{
-          height: '60%'
+          height: '61%'
         }}
       />
             <IconButton onClick={()=>{
@@ -147,6 +142,11 @@ setRefreshMap(false)
                   alignItems: 'center',
                   marginTop:'10%'
                 }}>
+                  <Text style={{
+                    marginBottom:5,
+                    fontWeight:'bold',
+                    marginTop:-5
+                  }}>Your Order is on the way</Text>
                   <ProfileCircle
                     source={gasLift}
                     custom={{
@@ -179,7 +179,7 @@ setRefreshMap(false)
                         <TouchableOpacity
 
                           onPress={() => {
-                            navigation.navigate('Chat')
+                            navigation.navigate(nextPage)
                           }}
                         >
                           <Text>chat</Text>
