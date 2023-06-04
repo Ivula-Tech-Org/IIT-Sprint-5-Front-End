@@ -14,6 +14,7 @@ const Home = ({ navigation }) => {
     const [userToken, setUserToken] = useState('default')
     const [userDetials, setUserDetails] = useState()
 
+    
 
     useEffect(()=>{
         (async ()=>{
@@ -27,7 +28,7 @@ const Home = ({ navigation }) => {
                 setUserToken(token)
                 setUserDetails(details)
     
-                axios.get('http://192.168.43.102:8000/front_end_service/categories', { headers: { authorization: token}})
+                axios.get('http://192.168.1.109:8000/front_end_service/categories', { headers: { authorization: token}})
                 .then(async (res) => {
                     setUserToken(res.data.token)
                     setCategList(res.data.data)
@@ -37,7 +38,7 @@ const Home = ({ navigation }) => {
                     alert('Sorry an error occured')
                  
                 })
-                axios.get('http://192.168.43.102:8000/front_end_service', { headers: { authorization: token}})
+                axios.get('http://192.168.1.109:8000/front_end_service', { headers: { authorization: token}})
                 .then(async (res) => {
                     setStationList(res.data.data)
                     console.log('station list',res.data.data)
@@ -70,6 +71,7 @@ const Home = ({ navigation }) => {
             </View>
                 <ListGas
                 onClick={(item)=>{
+                    console.log(item)
                     navigation.navigate('Station', { station : item, user:userDetials, token:userToken })
 
                 }}

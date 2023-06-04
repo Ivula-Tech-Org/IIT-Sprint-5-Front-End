@@ -20,7 +20,8 @@ const CallChat = ({ navigation ,route}) => {
   const MapsRef = useRef(null)
   const [loadUser, setLoadUser] = useState(false)
   const [refreshMap,setRefreshMap] = useState((false))
-  const {currPage,nextPage} = route.params
+  const {currPage,nextPage, cartItems} = route.params
+
   const skipLocator = () => {
     navigation.navigate('HomeCast')
   }
@@ -61,7 +62,9 @@ console.log('user login')
             const { latitude, longitude } = newLocation.coords;
             setCurrRegion({ latitude, longitude });
             // console.log(latitude,longitude)
+            // cartItems.Location.long = cartItems.Location.long + 10
             setInitialRegion({ latitude: latitude, longitude: longitude })
+            
             const clientRegion = {
               latitude: latitude,
               longitude: longitude,
@@ -70,8 +73,8 @@ console.log('user login')
             }
 
             const suppRegion = {
-                latitude: -1.2590906,
-                longitude: 36.7858022,
+                latitude: cartItems.location.lat,
+                longitude: cartItems.location.long,
                 latitudeDelta: 0.02,
                 longitudeDelta: 0.02
               }
@@ -117,6 +120,7 @@ setRefreshMap(false)
         custom={{
           height: '61%'
         }}
+        markerList={[cartItems.location]}
       />
             <IconButton onClick={()=>{
               setRefreshMap(true)
@@ -146,7 +150,7 @@ setRefreshMap(false)
                     marginBottom:5,
                     fontWeight:'bold',
                     marginTop:-5
-                  }}>Your Order is on the way</Text>
+                  }}>Your Order is being processed</Text>
                   <ProfileCircle
                     source={gasLift}
                     custom={{
@@ -179,7 +183,8 @@ setRefreshMap(false)
                         <TouchableOpacity
 
                           onPress={() => {
-                            navigation.navigate(nextPage)
+                            console.log('these are the passed ids : ',cartItems.clientID, cartItems.contID)
+                            navigation.navigate(nextPage,{clientID:cartItems.clientID,contID:cartItems.contID,tier:userDetails.tier})
                           }}
                         >
                           <Text>chat</Text>
@@ -201,7 +206,8 @@ setRefreshMap(false)
                         <TouchableOpacity
 
                           onPress={() => {
-                            Linking.openURL(`tel: 0741741381`)
+                            const number = cartItems.phoneNumber | ' 0741741381'
+                            Linking.openURL(`tel: ${number}`)
                             // navigation.navigate('HomeCast')
                           }}
                         >

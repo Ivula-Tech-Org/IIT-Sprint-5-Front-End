@@ -59,7 +59,7 @@ const chatStyles = StyleSheet.create({
         borderRadius:15,
         alignSelf:'flex-start',
         marginTop:'4%',
-        borderColor:'brown'
+        borderColor:'blue',
     }
 })
 

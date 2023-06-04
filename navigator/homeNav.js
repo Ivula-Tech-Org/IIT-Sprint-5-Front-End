@@ -10,6 +10,7 @@ import CartStack from '../components/cart'
 import ProfileStack from '../components/profile'
 const HomeNav = ({route}) => {
     const Tab = createBottomTabNavigator()
+    
  
     const {token,LoadHandler} = route.params
     return (
@@ -17,7 +18,7 @@ const HomeNav = ({route}) => {
             flex: 1
         }}>
             <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName='Order'
                 screenOptions={({ route }) => ({
 
                     headerShown: false,

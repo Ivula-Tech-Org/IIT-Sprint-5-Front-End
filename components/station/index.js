@@ -21,6 +21,9 @@ const Station = ({ navigation, route }) => {
     const { user, station, token } = route.params
     const [size, setSize] = useState()
     const [selected, setSelected] = useState()
+    const [price, setPrice] = useState()
+    const [cartItems, setCartItems] = useState()
+
     const filterAlert = (catName) => {
         setFilterName(catName)
         setFilterBox(false)
@@ -49,7 +52,7 @@ const Station = ({ navigation, route }) => {
 
             try {
 
-                axios.get('http://192.168.43.102:8000/front_end_service/gasService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                axios.get('http://192.168.1.109:8000/front_end_service/gasService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
                     .then(async (res) => {
                         setGassList(res.data.data)
                         console.log('gass list', res.data.data)
@@ -60,7 +63,7 @@ const Station = ({ navigation, route }) => {
 
                     })
 
-                axios.get('http://192.168.43.102:8000/front_end_service/AccService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                axios.get('http://192.168.1.109:8000/front_end_service/AccService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
                     .then(async (res) => {
                         setAccList(res.data.data)
                         console.log('gass list', res.data.data)
@@ -74,8 +77,8 @@ const Station = ({ navigation, route }) => {
                 console.log(err)
             }
         })()
-
-    }, [])
+       
+    },[])
 
     return (
         <SafeAreaView
@@ -207,48 +210,89 @@ const Station = ({ navigation, route }) => {
                 />
             </View>
             {options &&
-                <Options add={() => {
-                    // const index = selected.weightRange.map(item=>item.size).indexOf(size)
-                    let index = 0
-                    selected.weightRange.forEach((item, ind) => {
-                        if (size == item.size) {
-                            index = ind
+                <Options
+                    btnClick={async () => {
+                        console.log('hello world')
+                        const cartItem = {
+                            service: selected.service,
+                            item: selected._id,
+                            name:selected.name,
+                            image:selected.image,
+                            station: station._id,
+                            client: user._id,
+                            town: station.town,
+                            rating: station.stationRating,
+                            price: price ? price : selected.weightRange[0].price,
+                            size: size ? size : selected.weightRange[0].price,
+                            estTime : selected.deliveryTime,
+                            location : station.stationLocation
+                            ,phoneNumber:station.phoneNumber
                         }
-
-                    });
-
-                    console.log(selected.weightRange[3], index, selected.weightRange.length)
-                    {
-                        index < selected.weightRange.length -1 ?
-                        setSize(selected.weightRange[index + 1].size) : setSize(selected.weightRange[selected.weightRange.length-1].size)
-                    }
-                }} 
-                remove={() => {
-                    // const index = selected.weightRange.map(item=>item.size).indexOf(size)
-                    let index = 0
-                    selected.weightRange.forEach((item, ind) => {
-                        if (size == item.size) {
-                            index = ind
+                        let cart = await AsyncStorage.getItem('CartItems')
+                        if (cart) {
+                            cart = JSON.parse(cart)
+                            cart.push(cartItem)
+                            cart = JSON.stringify(cart)
+                        } else {
+                            cart = [cartItem]
+                            cart = JSON.stringify(cart)
                         }
+                        await AsyncStorage.setItem('CartItems', cart)
+                        alertPop()
 
-                    });
+                    }}
+                    add={() => {
+                        // const index = selected.weightRange.map(item=>item.size).indexOf(size)
+                        let index = 0
+                        selected.weightRange.forEach((item, ind) => {
+                            if (size == item.size) {
+                                index = ind
+                            }
 
-                    console.log(selected.weightRange[3], index, selected.weightRange.length)
-                    {
-                        index >0?
-                        setSize(selected.weightRange[index - 1].size) : setSize(selected.weightRange[0].size)
-                    }
-                }}
-                size={size ? size : selected.weightRange[0].size} closePop={closePop} alertPop={alertPop} />
+                        });
+
+                        console.log(selected.weightRange[3], index, selected.weightRange.length)
+                        {
+                            if (index < selected.weightRange.length - 1) {
+                                    setSize(selected.weightRange[index + 1].size)
+                                    setPrice(selected.weightRange[index + 1].price)
+                                
+                            } else {
+                                    setSize(selected.weightRange[selected.weightRange.length - 1].size)
+                                    setPrice(selected.weightRange[selected.weightRange.length - 1].price)
+                                
+                            }
+                        }
+                    }}
+                    remove={() => {
+                        // const index = selected.weightRange.map(item=>item.size).indexOf(size)
+                        let index = 0
+                        selected.weightRange.forEach((item, ind) => {
+                            if (size == item.size) {
+                                index = ind
+                            }
+
+                        });
+
+                        console.log(selected.weightRange[3], index, selected.weightRange.length)
+                        {
+                            if(index > 0){
+                                
+                                    setSize(selected.weightRange[index - 1].size)
+                                    setPrice(selected.weightRange[index - 1].price)
+                                 }else{
+                                    setSize(selected.weightRange[0].size)
+                                    setPrice(selected.weightRange[0].price)
+                                }
+                        }
+                    }}
+                    size={size ? size : selected.weightRange[0].size} closePop={closePop} alertPop={alertPop} />
             }
 
             {alertBox && <AlertBox
                 closePop={closePop}
                 options={{ main: 'Item Added. Continue shoping or go to cart', left: 'Continue', right: 'Cart' }}
                 navTo={navTo}
-                onClick={()=>{
-                    alert()
-                }}
 
             />}
         </SafeAreaView>
