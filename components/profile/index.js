@@ -13,7 +13,7 @@ const ProfileStack = ({ route }) => {
     return (
 
         <Stack.Navigator
-            initialRouteName='Profile'
+            initialRouteName='Dashboard'
             screenOptions={{
                 headerShown: false
             }}

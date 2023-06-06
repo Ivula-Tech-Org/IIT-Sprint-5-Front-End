@@ -18,7 +18,7 @@ const HomeNav = ({route}) => {
             flex: 1
         }}>
             <Tab.Navigator
-            initialRouteName='Order'
+            initialRouteName='Profiles'
                 screenOptions={({ route }) => ({
 
                     headerShown: false,
