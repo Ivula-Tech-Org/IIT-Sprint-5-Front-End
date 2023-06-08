@@ -1,4 +1,4 @@
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Container, DashBoardPlate, HeaderBar } from "../../globals/utils";
 import { gasWin } from "../../globals/images";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
+import { Ionicons } from "@expo/vector-icons";
 
 const Dashboard = ({ navigation }) => {
   const [token, setToken] = useState();
@@ -61,10 +62,17 @@ const Dashboard = ({ navigation }) => {
           });
       
     })()
+
   },[test]);
 
   const getData = async()=>{
    
+  }
+
+  const getAnalytics = ()=>{
+    order.forEach(()=>{
+      alert(Date.now)
+    })
   }
 
   const dummyList = [
@@ -108,7 +116,7 @@ const Dashboard = ({ navigation }) => {
           onClick={() => {
             navigation.navigate("ListPlate", {
               title: "Orders",
-              gasList: dummyList,
+              gasList: rowOrders.order,
               accList: dummyList,
             });
           }}
@@ -153,6 +161,15 @@ const Dashboard = ({ navigation }) => {
           bcolor={"#000099"}
         />
       </View>
+      <TouchableOpacity
+      onPress={()=>{
+        navigation.navigate('StationStore')
+      }}
+      >
+        <>
+        <Ionicons name="home" size={20}/>
+        </>
+      </TouchableOpacity>
       <Text
         style={{
           paddingLeft: "10%",

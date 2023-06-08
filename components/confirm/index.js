@@ -120,11 +120,12 @@ const Confirm = ({ navigation, route }) => {
               longitudeDelta: 0.02,
             };
 
+            
             //to remove on debug
-            cartItems[0].location.long =
-              parseFloat(cartItems[0].location.long) + 10;
-            cartItems[1].location.long =
-              parseFloat(cartItems[1].location.long) + 20;
+            // cartItems[0].location.long =
+            //   parseFloat(cartItems[0].location.long) + 10;
+            // cartItems[1].location.long =
+            //   parseFloat(cartItems[1].location.long) + 20;
             //kindly remember
 
             const markingList = cartItems.map((val) => val.location);

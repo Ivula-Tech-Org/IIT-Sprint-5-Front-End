@@ -5,3 +5,4 @@ localstorage data:
 
     - all flatlist should be given a listemptycomponent
     - all flatlist should be scrollable
+    - parseint kgs

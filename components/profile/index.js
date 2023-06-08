@@ -5,6 +5,7 @@ import Confirm from '../confirm'
 import Profile from './landing'
 import Dashboard from './dashboard'
 import ListPlate from './listplate.js'
+import StationStore from '../stationStore'
 
 const ProfileStack = ({ route }) => {
     const Stack = createNativeStackNavigator()
@@ -13,7 +14,7 @@ const ProfileStack = ({ route }) => {
     return (
 
         <Stack.Navigator
-            initialRouteName='Dashboard'
+            initialRouteName='StationStore'
             screenOptions={{
                 headerShown: false
             }}
@@ -32,6 +33,7 @@ const ProfileStack = ({ route }) => {
             <Stack.Screen name='DCallChat' component={CallChat} />
             <Stack.Screen name='DConfirm' component={Confirm} />
             <Stack.Screen name='DChat' component={Chat} />
+            <Stack.Screen name='StationStore' component={StationStore} />
 
         </Stack.Navigator>
 

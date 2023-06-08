@@ -753,6 +753,8 @@ const Deals = ({ custom, onClick, dealData }) => {
           const minSize = item.weightRange && Math.min(...sizeList);
           const maxSize = item.weightRange && Math.max(...sizeList);
           console.log(item.image);
+          const gasImage = gasImage in item ? item.gasImage :item.image
+          const deliveryTime  = deliveryTime in item ? item.deliveryTime :item.estTime
           return (
             <TouchableOpacity
               onPress={() => {
@@ -768,7 +770,7 @@ const Deals = ({ custom, onClick, dealData }) => {
               }}
             >
               <ImageBackground
-                source={{ uri: `${item.gasImage}` }}
+                source={{ uri: `${gasImage}` }}
                 style={{
                   height: 60,
                   width: 60,
@@ -800,12 +802,18 @@ const Deals = ({ custom, onClick, dealData }) => {
                     {minSize} - {maxSize} kg
                   </Text>
                 )}
+
+                {item.size && 
+                <Text>
+                  size : {item.size}
+                </Text>
+                }
                 <Text
                   style={{
                     fontSize: 10,
                   }}
                 >
-                  {item.deliveryTime}
+                  {deliveryTime}
                 </Text>
                 <Text
                   style={{

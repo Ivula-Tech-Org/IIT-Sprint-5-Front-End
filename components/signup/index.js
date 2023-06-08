@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Linking } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logInStyle from '../login/style'
 import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
@@ -163,7 +163,9 @@ const SignUp = ({ navigation,route }) => {
                         width: '100%',
                         paddingRight: '17%'
                     }}
-                    onPress={onDistributer}
+                    onPress={()=>{
+                        Linking.openURL('uri: http://eltus.ivula.co.ke')
+                    }}
                 >
                     <Text style={{
                         textAlign: 'right',
