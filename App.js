@@ -7,6 +7,7 @@ import AsyncStorage, { useAsyncStorage } from '@react-native-async-storage/async
 import { NavigationContainer } from '@react-navigation/native'
 
 const App = ()=>{
+  const environment  = process.env.NODE_ENV
 const [isSigned,setIsSigned] = useState(false)
 const [notSigned,setNotSigned] = useState(false)
 const [loader,setLoader] = useState(false)

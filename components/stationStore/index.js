@@ -10,16 +10,26 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context";
 import { COLORS } from "../globals/theme";
-import { RadioButton } from "react-native-elements";
 import utilStyles from "../globals/utils/utilStyles";
-import { Back, Banner, ErrorBox, IconButton, LongButtonDark } from "../globals/utils";
+import {
+  Back,
+  Banner,
+  ErrorBox,
+  IconButton,
+  LongButtonDark,
+} from "../globals/utils";
 import { orders } from "../globals/images";
 import SelectDropdown from "react-native-select-dropdown";
-import * as ImagePicker from 'expo-image-picker'
+import * as ImagePicker from "expo-image-picker";
+import Config from "react-native-config";
+import { variables } from "../globals/utils";
+import { RadioButton } from "react-native-paper";
+// import {radios}
 
 const StationStore = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState();
@@ -36,51 +46,74 @@ const StationStore = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState();
   const [size, setSize] = useState();
   const [price, setPrice] = useState();
-  const [photo, setPhoto]=useState()
-  const [imageView, setImageView]= useState(false);
+  const [photo, setPhoto] = useState();
+  const [imageView, setImageView] = useState(false);
+  const [images, setImages] = useState([]);
+  const [serviceTier, setServiceTier] = useState();
 
   useEffect(() => {
     (async () => {
-      const token = await AsyncStorage.getItem("Token");
-      const details = jwtDecode(token);
-      setToken(token);
-      setUserDetails(details);
-      console(userDetails)
+      try {
+        const token = await AsyncStorage.getItem("Token");
+        const details = jwtDecode(token);
+        setToken(token);
+        setUserDetails(details);
+        axios
+          .get(
+            `${variables.HOST_URL}front_end_service/gasService/user_service`,
+            {
+              headers: { authorization: token },
+            }
+          )
+          .then((res) => {
+            setErrorMessage(false);
+            const station = res.data.data._id;
+            setStationName(station);
 
-      axios
-        .get("/", {
-          headers: { authorization: token },
-          params: { contID: userDetails._id },
-        })
-        .then((res) => {
-          const station = res.data.id;
-          setStationName(station);
-        })
-        .catch((err) => {
-          setErrorMessage(
-            "something went wrong, kindly check you network or login afresh"
-          );
-        });
+            axios
+              .get(`${variables.HOST_URL}front_end_service/categories`, {
+                headers: { authorization: token },
+              })
+              .then((res) => {
+                setGasCateg(res.data.data.map((item) => item.gasName));
 
-      axios
-        .get("http://192.168.43.102:8000/front_end_service/categories", { headers: { authorization: token } })
-        .then((res) => {
-          setGasCateg(res.data.data.map((item) => item.gasName));
-        })
-        .catch((err) => {
-          setErrorMessage(
-            "something went wrong, kindly check you network or login afresh"
-          );
-        });
+                axios
+                  .get(`${variables.HOST_URL}front_end_service/images`, {
+                    headers: { authorization: token },
+                  })
+                  .then((res) => {
+                    setImages(res.data.images);
+                  })
+                  .catch((err) => {
+                    setErrorMessage(
+                      "something went wrong, kindly check you network or login afresh"
+                    );
+                  });
+                setLoader(false);
+              })
+              .catch((err) => {
+                setErrorMessage(
+                  "something went wrong, kindly check you network or login afresh"
+                );
+              });
+          })
+          .catch((err) => {
+            setErrorMessage(
+              "something went wrong, kindly check you network or login afresh"
+            );
+          });
+      } catch (err) {
+        setErrorMessage(
+          `An error occured, ${err.message}, try loging in again`
+        );
+      }
       setLoader(false);
     })();
   }, []);
 
-  
-
   const setStation = () => {
     setLoader(true);
-    if ((!name, !service, !weightRange, !deliveryTime, !image)) {
+    if ((!name, !service, !weightRange, !deliveryTime, !photo)) {
       setErrorMessage(
         "You did not provide all the params, kindly fill in all of them"
       );
@@ -92,14 +125,19 @@ const StationStore = ({ navigation }) => {
         service: service,
         weightRange: weightRange,
         deliveryTime: deliveryTime,
-        image: image,
+        image: photo,
         object: object,
       };
+      console.log(token);
       axios
-        .post("/", { headers: { authorization: token }, params: station })
+        .post(`${variables.HOST_URL}front_end_service/${serviceTier}`, null, {
+          headers: { authorization: token },
+          params: station,
+        })
         .then((res) => {
           setLoader(false);
-          setErrorMessage("Service added successfuly");
+          alert('Service added succefuly')
+          navigation.navigate('Dashboard')
         })
         .catch((res) => {
           setLoader(false);
@@ -107,6 +145,8 @@ const StationStore = ({ navigation }) => {
             "failed to add your service, kindly try again, or login afresh"
           );
         });
+
+      console.log(station);
     }
   };
 
@@ -123,7 +163,7 @@ const StationStore = ({ navigation }) => {
     >
       <Back navigation={navigation} />
 
-      <View>
+      {/* <View>
         <Banner avator={orders} />
         {loader ? (
           <ActivityIndicator
@@ -136,7 +176,7 @@ const StationStore = ({ navigation }) => {
         ) : (
           <></>
         )}
-      </View>
+      </View> */}
 
       <View
         style={[
@@ -159,26 +199,61 @@ const StationStore = ({ navigation }) => {
           }}
         />
         <View>{/* <RadioButton/> */}</View>
+        <View>
+          <RadioButton.Group
+            onValueChange={(option) => {
+              console.log(option);
+              setServiceTier(option);
+            }}
+            value={serviceTier}
+          >
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <RadioButton.Item
+                labelStyle={{
+                  fontSize: 12,
+                }}
+                labelVariant="labelSmall"
+                label="Gass"
+                value="gasService"
+                size={10}
+              />
+              <RadioButton.Item
+                labelStyle={{
+                  fontSize: 12,
+                }}
+                labelVariant="labelSmall"
+                label="accessory"
+                value="AccService"
+                size={10}
+              />
+            </View>
+          </RadioButton.Group>
+        </View>
         <SelectDropdown
-        searchPlaceHolder="Gass type"
-        placeholder={'Gass type'}
-        data={gasCateg}
-        buttonStyle={{
-            backgroundColor:'transparent'
-            ,borderWidth:1,
-            borderColor:COLORS.primary,
-            borderRadius:10
-            ,height:35
-            ,marginBottom:10
-        }}
-        buttonTextStyle={{
-            fontSize:15
-        }}
-        onSelect={(item)=>{
-            setName(item)
-            console.log(item)
-        }}
-        
+          defaultButtonText="Gass type"
+          placeholder={"Gass type"}
+          data={gasCateg}
+          buttonStyle={{
+            backgroundColor: "transparent",
+            borderWidth: 1,
+            borderColor: COLORS.primary,
+            borderRadius: 10,
+            height: 35,
+            marginBottom: 10,
+          }}
+          buttonTextStyle={{
+            fontSize: 15,
+          }}
+          onSelect={(item) => {
+            setName(item);
+            console.log(item);
+          }}
         />
         <TextInput
           autoCapitalize="none"
@@ -222,13 +297,15 @@ const StationStore = ({ navigation }) => {
                     onPress={() => {
                       console.log(weightRange.length);
                       if (weightRange.length > 0) {
-                        console.log('first here : ', weightRange)
-                        const range = weightRange.filter((paritem)=>paritem !==item)
-                        console.log(range)
+                        console.log("first here : ", weightRange);
+                        const range = weightRange.filter(
+                          (paritem) => paritem !== item
+                        );
+                        console.log(range);
                         setWeightRange(range);
                         console.log("gone here");
-                      }else{
-                        console.log('gone hre else')
+                      } else {
+                        console.log("gone hre else");
                       }
                     }}
                   >
@@ -289,86 +366,90 @@ const StationStore = ({ navigation }) => {
         />
 
         <TouchableOpacity
-        onPress={()=>{
-            setImageView(true)
-        }}
-          style={[utilStyles.inputStyle, {
-            justifyContent:'center'
-            ,alignItems:'center'
-          }]}
-        
+          onPress={() => {
+            setImageView(true);
+          }}
+          style={[
+            utilStyles.inputStyle,
+            {
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
         >
-            <Text>{photo ? photo :'click to upload image'}</Text>
+          <Text>{image ? image : "click to upload image"}</Text>
         </TouchableOpacity>
-        <LongButtonDark text={"Create Service"} submit={()=>{
-            alert()
-        }} />
+        <LongButtonDark text={"Create Service"} submit={setStation} />
       </View>
-      {imageView &&
-      <View style={{
-        height:'100%'
-        ,width:'100%'
-        ,position:'absolute'
-        ,backgroundColor:'rgba(255, 245, 157, 0.7)'
-        ,zIndex:2,
-        alignItems:'center'
-        
-      }}>
-        <IconButton icon='close' size={{icon:20, box:35}} custom={{
-            left:'36%'
-            ,backgroundColor:'white',
-            marginTop:'20%'
-        }}
-        onClick={()=>{
-            setImageView(false)
-        }}
-        
-        />
-        <FlatList style={{
-            // borderWidth:1,
-            height:'85%',
-            width:'90%',
-            marginTop:20
-        }}
-        data={[1,2,3,4,5,2,3,4,5,2,3,4,5,2,3,4,5,2,3,4,5,2,3,4,5,2,3,4,5,2,3,4,5]}
-        ListEmptyComponent={()=>{
-            return(
-                <Text>no Images to show</Text>
-            )
-        }}
-        // horizontal
-        numColumns={3}
-        renderItem={(item)=>{
-            return(
-
-                <TouchableOpacity style={{
-                    backgroundColor:'red'
-                    ,height:100
-                    ,width:100
-                    ,borderRadius:15,
-                    marginRight:10,
-                    marginBottom:10,
-                    overflow:'hidden'
-                }}
-                onPress={()=>{
-                    setPhoto(item.item)
-                    setImageView(false)
-                }}
+      {imageView && (
+        <View
+          style={{
+            height: "100%",
+            width: "100%",
+            position: "absolute",
+            backgroundColor: "rgba(255, 245, 157, 0.7)",
+            zIndex: 2,
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            icon="close"
+            size={{ icon: 20, box: 35 }}
+            custom={{
+              left: "36%",
+              backgroundColor: "white",
+              marginTop: "20%",
+            }}
+            onClick={() => {
+              setImageView(false);
+            }}
+          />
+          <FlatList
+            style={{
+              // borderWidth:1,
+              height: "85%",
+              width: "90%",
+              marginTop: 20,
+            }}
+            data={images}
+            ListEmptyComponent={() => {
+              return <Text>no Images to show</Text>;
+            }}
+            // horizontal
+            numColumns={3}
+            renderItem={(inItem) => {
+              let item = inItem.item;
+              return (
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "red",
+                    height: 100,
+                    width: 100,
+                    borderRadius: 15,
+                    marginRight: 10,
+                    marginBottom: 10,
+                    overflow: "hidden",
+                  }}
+                  onPress={() => {
+                    setPhoto(item.link);
+                    setImage(item.name);
+                    console.log(item.link);
+                    setImageView(false);
+                  }}
                 >
-                <ImageBackground
-    
-                source={orders}
-                style={{
-                    height:'100%',
-                    width:'100%'
-                }}
-                />
+                  <ImageBackground
+                    source={{ uri: `${item.link}` }}
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                    }}
+                  />
                 </TouchableOpacity>
-    
-            )            
-        }}
-        />
-      </View>}
+              );
+            }}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

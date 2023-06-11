@@ -1,6 +1,6 @@
-import { View, Text, Dimensions, TouchableOpacity } from "react-native";
+import { View, Text, Dimensions, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Container, DashBoardPlate, HeaderBar } from "../../globals/utils";
+import { Container, DashBoardPlate, HeaderBar, IconButton, variables } from "../../globals/utils";
 import { gasWin } from "../../globals/images";
 import { LineChart } from "react-native-chart-kit";
 import { useEffect, useState } from "react";
@@ -25,7 +25,7 @@ const Dashboard = ({ navigation }) => {
         setToken(userToken);
         const userDetails = jwtDecode(userToken);
         axios
-          .get("http://192.168.1.109:8000/orders_service", {
+          .get(`${variables.HOST_URL}orders_service`, {
             headers: { authorization: userToken },
             params: { requester: userDetails,forWho:'contractor' },
           })
@@ -92,6 +92,7 @@ const Dashboard = ({ navigation }) => {
         },
       ]}
     >
+      
       <View>
         <HeaderBar
           source={gasWin}
@@ -101,6 +102,11 @@ const Dashboard = ({ navigation }) => {
           }}
         />
       </View>
+      <ScrollView
+      style={{
+        paddingBottom:-200
+      }}
+      >
       <View
         style={{
           padding: 20,
@@ -162,13 +168,26 @@ const Dashboard = ({ navigation }) => {
         />
       </View>
       <TouchableOpacity
+      style={{
+        marginLeft:'10%'
+      }}
       onPress={()=>{
         navigation.navigate('StationStore')
       }}
       >
-        <>
-        <Ionicons name="home" size={20}/>
-        </>
+      <IconButton
+        icon="add-outline"
+        size={{ box: 30, icon: 23 }}
+        custom={{
+          marginBottom: 20,
+          padding:0
+        }}
+        onClick={() => {
+          {
+            navigation.navigate('StationStore')
+          }
+        }}
+      />
       </TouchableOpacity>
       <Text
         style={{
@@ -247,6 +266,8 @@ const Dashboard = ({ navigation }) => {
           );
         }}
       />
+      </ScrollView>
+
     </SafeAreaView>
   );
 };

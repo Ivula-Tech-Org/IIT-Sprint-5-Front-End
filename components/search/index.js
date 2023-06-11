@@ -51,7 +51,7 @@ const Search = ({ navigation }) => {
                     Gass Accessories  
 
                 </Text>
-                <Deals 
+                {/* <Deals 
                 custom={{
                     height:'35%'
                 }}
@@ -60,7 +60,7 @@ const Search = ({ navigation }) => {
                     navigation.navigate('Station')
 
                     }}
-                />
+                /> */}
             </View>
         </SafeAreaView>
         // </KeyboardAvoidingView>

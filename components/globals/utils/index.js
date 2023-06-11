@@ -41,7 +41,9 @@ const LongButtonLight = ({ text, textStyle, butStyle, submit }) => {
     </TouchableOpacity>
   );
 };
-
+const variables = {
+  HOST_URL: "http://192.168.43.102:8342/",
+};
 const Banner = ({ avator }) => {
   return (
     <View
@@ -753,8 +755,9 @@ const Deals = ({ custom, onClick, dealData }) => {
           const minSize = item.weightRange && Math.min(...sizeList);
           const maxSize = item.weightRange && Math.max(...sizeList);
           console.log(item.image);
-          const gasImage = gasImage in item ? item.gasImage :item.image
-          const deliveryTime  = deliveryTime in item ? item.deliveryTime :item.estTime
+          const gasImage = gasImage in item ? item.gasImage : item.image;
+          const deliveryTime =
+            deliveryTime in item ? item.deliveryTime : item.estTime;
           return (
             <TouchableOpacity
               onPress={() => {
@@ -803,11 +806,7 @@ const Deals = ({ custom, onClick, dealData }) => {
                   </Text>
                 )}
 
-                {item.size && 
-                <Text>
-                  size : {item.size}
-                </Text>
-                }
+                {item.size && <Text>size : {item.size}</Text>}
                 <Text
                   style={{
                     fontSize: 10,
@@ -854,7 +853,7 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
     >
       <IconButton
         icon="close"
-        size={{ box: 25, size: 20 }}
+        size={{ box: 25, icon: 20 }}
         custom={{
           marginBottom: 20,
         }}
@@ -894,7 +893,7 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
                 <IconButton
                   onClick={remove}
                   icon={"remove-outline"}
-                  size={{ box: 20, size: 23 }}
+                  size={{ box: 20, icon: 23 }}
                   custom={{
                     padding: 1,
                     marginLeft: 10,
@@ -911,7 +910,7 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
                 <IconButton
                   onClick={add}
                   icon={"add-outline"}
-                  size={{ box: 20, size: 23 }}
+                  size={{ box: 20, icon: 23 }}
                   custom={{
                     marginLeft: 7,
                     padding: 1,
@@ -1088,7 +1087,7 @@ const DashBoardPlate = ({ onClick, title, dig, bcolor }) => {
   );
 };
 
-const socketConn = new WS('')
+const socketConn = new WS("");
 
 export {
   socketConn,
@@ -1111,4 +1110,5 @@ export {
   ErrorBox,
   CategBar,
   Deals,
+  variables,
 };
