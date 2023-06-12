@@ -31,7 +31,7 @@ const ListPlate = ({ navigation, route }) => {
       setUserDetails(details);
 
       axios
-        .get("http://192.168.1.109:8000/front_end_service/categories", {
+        .get(`${variables.HOST_URL}front_end_service/categories`, {
           headers: { authorization: token },
         })
         .then(async (res) => {

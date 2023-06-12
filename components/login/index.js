@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert, AppState } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logInStyle from '../login/style'
-import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
+import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight, variables } from '../globals/utils'
 import utilStyles from '../globals/utils/utilStyles'
 import { fillGas } from '../globals/images'
 import { useEffect, useState } from 'react'
@@ -23,7 +23,7 @@ const Login = ({ navigation,route }) => {
         try
         {
 
-            axios.get('http://192.168.1.109:8000/auth_service/login', { params: { type: 'client', userEmail: userEmail, password: password} })
+            axios.get(`${variables.HOST_URL}auth_service/login`, { params: { type: 'client', userEmail: userEmail, password: password} })
             .then(async (res) => {
                 if(res.status = '200'){
                     // console.log(res.data.token)
@@ -58,7 +58,8 @@ const Login = ({ navigation,route }) => {
             })
         }catch(err){
             setLoader(false)
-            setErrorMessage('Sory, something went wrong')
+            setErrorMessage('Sorry, something went wrong')
+            console.log(err)
         }
     }
     const onForget = () => {
@@ -103,7 +104,7 @@ const Login = ({ navigation,route }) => {
                 }} style={[utilStyles.inputStyle, {
 
                 }]}
-                    placeholder='User name'
+                    placeholder='User email'
                 />
                 <TextInput secureTextEntry={true} onChangeText={(e)=>{
                     console.log(e)

@@ -24,7 +24,7 @@ const Locator = ({ navigation }) => {
     setLoader(true)
     setErrorMessage(null)
     console.log(userDetails)
-    await axios.post('http://192.168.43.102:8000/post_location', null, { params: { lat: currRegion.latitude, long: currRegion.longitude }, headers: { authorization: userDetails } })
+    await axios.post(`${variables.HOST_URL}post_location`, null, { params: { lat: currRegion.latitude, long: currRegion.longitude }, headers: { authorization: userDetails } })
       .then((res) => {
         if (res.status == '200') {
           setLoader(false)

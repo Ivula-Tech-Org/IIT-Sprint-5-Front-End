@@ -66,7 +66,9 @@ const StationStore = ({ navigation }) => {
             }
           )
           .then((res) => {
+            console.log(res.data);
             setErrorMessage(false);
+            console.log("res data ", res.data.data);
             const station = res.data.data._id;
             setStationName(station);
 
@@ -85,6 +87,8 @@ const StationStore = ({ navigation }) => {
                     setImages(res.data.images);
                   })
                   .catch((err) => {
+                    console.log(err);
+
                     setErrorMessage(
                       "something went wrong, kindly check you network or login afresh"
                     );
@@ -92,12 +96,15 @@ const StationStore = ({ navigation }) => {
                 setLoader(false);
               })
               .catch((err) => {
+                console.log(err);
+
                 setErrorMessage(
                   "something went wrong, kindly check you network or login afresh"
                 );
               });
           })
           .catch((err) => {
+            console.log(err);
             setErrorMessage(
               "something went wrong, kindly check you network or login afresh"
             );
@@ -113,7 +120,9 @@ const StationStore = ({ navigation }) => {
 
   const setStation = () => {
     setLoader(true);
-    if ((!name, !service, !weightRange, !deliveryTime, !photo)) {
+    if (
+      (name == "" || service == "" || weightRange.length < 1 || deliveryTime == "" || photo == "")
+    ) {
       setErrorMessage(
         "You did not provide all the params, kindly fill in all of them"
       );
@@ -129,6 +138,9 @@ const StationStore = ({ navigation }) => {
         object: object,
       };
       console.log(token);
+      setTimeout(() => {
+        console.log(("going with, ", serviceTier));
+      }, 2000);
       axios
         .post(`${variables.HOST_URL}front_end_service/${serviceTier}`, null, {
           headers: { authorization: token },
@@ -136,13 +148,13 @@ const StationStore = ({ navigation }) => {
         })
         .then((res) => {
           setLoader(false);
-          alert('Service added succefuly')
-          navigation.navigate('Dashboard')
+          alert("Service added succefuly");
+          navigation.navigate("Dashboard");
         })
         .catch((res) => {
           setLoader(false);
           setErrorMessage(
-            "failed to add your service, kindly try again, or login afresh"
+          'An error occured kindly try again later'
           );
         });
 
@@ -198,6 +210,7 @@ const StationStore = ({ navigation }) => {
             return <></>;
           }}
         />
+        {loader && <ActivityIndicator size={30} color={COLORS.primary} />}
         <View>{/* <RadioButton/> */}</View>
         <View>
           <RadioButton.Group
@@ -329,6 +342,7 @@ const StationStore = ({ navigation }) => {
             }}
             style={[utilStyles.inputStyle, { width: "30%" }]}
             placeholder="size"
+            keyboardType="numeric"
           />
 
           <TextInput
@@ -337,6 +351,7 @@ const StationStore = ({ navigation }) => {
             }}
             style={[utilStyles.inputStyle, { width: "30%", marginLeft: "2%" }]}
             placeholder="price"
+            keyboardType="numeric"
           />
           <TouchableOpacity
             style={{

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Text, KeyboardAvoidingView, TouchableOpacity, View, ImageBackground, FlatList } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CategBar, HeaderBar, ListGas, SearchBar } from "../../globals/utils";
+import { CategBar, HeaderBar, ListGas, SearchBar, variables } from "../../globals/utils";
 import { gasLift, gasWin } from "../../globals/images";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,7 +28,7 @@ const Home = ({ navigation }) => {
                 setUserToken(token)
                 setUserDetails(details)
     
-                axios.get('http://192.168.1.109:8000/front_end_service/categories', { headers: { authorization: token}})
+                axios.get(`${variables.HOST_URL}front_end_service/categories`, { headers: { authorization: token}})
                 .then(async (res) => {
                     setUserToken(res.data.token)
                     setCategList(res.data.data)
@@ -38,7 +38,7 @@ const Home = ({ navigation }) => {
                     alert('Sorry an error occured')
                  
                 })
-                axios.get('http://192.168.1.109:8000/front_end_service', { headers: { authorization: token}})
+                axios.get(`${variables.HOST_URL}front_end_service`, { headers: { authorization: token}})
                 .then(async (res) => {
                     setStationList(res.data.data)
                     console.log('station list',res.data.data)
@@ -72,7 +72,7 @@ const Home = ({ navigation }) => {
                 <ListGas
                 onClick={(item)=>{
                     console.log(item)
-                    navigation.navigate('Station', { station : item, user:userDetials, token:userToken })
+                    navigation.navigate('Station', { station : item, user:userDetials, token:userToken, categList:categList })
 
                 }}
                 listGas={stationList}

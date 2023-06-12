@@ -42,16 +42,16 @@ const LongButtonLight = ({ text, textStyle, butStyle, submit }) => {
   );
 };
 const variables = {
-  HOST_URL: "http://192.168.43.102:8342/",
+  HOST_URL: "http://192.168.1.109:8342/",
 };
-const Banner = ({ avator }) => {
+const Banner = ({ avator, custom }) => {
   return (
     <View
-      style={{
+      style={[{
         // width:'100%',
         width: 270,
         paddingTop: 50,
-      }}
+      }, custom]}
     >
       <View
         style={{
@@ -186,7 +186,7 @@ const HeaderBar = ({ text, source, custom }) => {
     </View>
   );
 };
-const SearchBar = ({ searchLogic, custom }) => {
+const SearchBar = ({ searchLogic, custom , getText}) => {
   return (
     <View
       style={[
@@ -205,6 +205,7 @@ const SearchBar = ({ searchLogic, custom }) => {
     >
       <TextInput
         placeholder="type here"
+        onChangeText={getText}
         style={{
           // borderWidth:1,
           paddingLeft: 20,
@@ -383,6 +384,7 @@ const ListGas = ({ listGas, custom, onClick }) => {
                         backgroundColor: COLORS.primary,
                         padding: 10,
                         paddingBottom: 5,
+                        minHeight:70
                       }}
                     >
                       <Text
@@ -710,10 +712,29 @@ const Maps = ({
               }}
               title="You"
             ></Marker>
+            {/* <FlatList
+            data={markerList}
+            renderItem={(inItem)=>{
+              let item = inItem.item
+              return (
+                <Marker
+                  coordinate={{
+                    // latitude: currRegion.latitude,
+                    latitude: parseFloat(item.lat),
+                    longitude: parseFloat(item.long),
+
+                    // longitude: currRegion.longitude,
+                  }}
+                  title="Supplier"
+                ></Marker>
+              )}}
+            /> */}
             {markerList &&
-              markerList.map((item) => {
+              markerList.map((item, index) => {
                 return (
                   <Marker
+                  key={index}
+
                     coordinate={{
                       // latitude: currRegion.latitude,
                       latitude: parseFloat(item.lat),
@@ -751,9 +772,15 @@ const Deals = ({ custom, onClick, dealData }) => {
           const sizeList =
             item.weightRange &&
             item.weightRange.map((value) => parseInt(value.size));
+          const priceList =
+            item.weightRange &&
+            item.weightRange.map((value) => parseInt(value.price));
+            
           // const minValue = Math.min(...sizeList)
           const minSize = item.weightRange && Math.min(...sizeList);
           const maxSize = item.weightRange && Math.max(...sizeList);
+          const minPrice = item.weightRange && Math.min(...priceList);
+          const maxPrice = item.weightRange && Math.max(...priceList);
           console.log(item.image);
           const gasImage = gasImage in item ? item.gasImage : item.image;
           const deliveryTime =
@@ -802,7 +829,8 @@ const Deals = ({ custom, onClick, dealData }) => {
                       fontSize: 10,
                     }}
                   >
-                    {minSize} - {maxSize} kg
+                    {minSize == maxSize ? <Text>{minSize} kg</Text> : <Text>{minSize} - {maxSize} kg</Text>}
+                    
                   </Text>
                 )}
 
@@ -820,7 +848,7 @@ const Deals = ({ custom, onClick, dealData }) => {
                     left: "180%",
                   }}
                 >
-                  {item.price}/=
+                    {minPrice == maxPrice ? <Text>{minPrice} /=</Text> : <Text>{minPrice} - {maxPrice} /=</Text>}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -838,7 +866,7 @@ const Deals = ({ custom, onClick, dealData }) => {
   );
 };
 
-const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
+const Options = ({ size,price, clickable, closePop, btnClick, alertPop, add, remove }) => {
   return (
     <View
       style={{
@@ -853,7 +881,7 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
     >
       <IconButton
         icon="close"
-        size={{ box: 25, icon: 20 }}
+        size={{ box: 25, icon: 13 }}
         custom={{
           marginBottom: 20,
         }}
@@ -872,7 +900,7 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
               style={{
                 backgroundColor: "white",
                 // ,flex:1
-                height: 100,
+                minHeight: 100,
                 width: 200,
                 padding: 20,
               }}
@@ -890,15 +918,17 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
                 >
                   Weight :{" "}
                 </Text>
+                {clickable  &&
                 <IconButton
                   onClick={remove}
                   icon={"remove-outline"}
-                  size={{ box: 20, icon: 23 }}
+                  size={{ box: 20, icon: 13 }}
                   custom={{
                     padding: 1,
                     marginLeft: 10,
                   }}
-                />
+                />}
+                <Text>{clickable}</Text>
                 <Text
                   style={{
                     fontWeight: "bold",
@@ -907,16 +937,22 @@ const Options = ({ size, closePop, btnClick, alertPop, add, remove }) => {
                 >
                   {size}
                 </Text>
+                {clickable &&
                 <IconButton
                   onClick={add}
                   icon={"add-outline"}
-                  size={{ box: 20, icon: 23 }}
+                  size={{ box: 20, icon: 13 }}
                   custom={{
                     marginLeft: 7,
                     padding: 1,
                   }}
-                />
+                />}
+
               </View>
+              <Text style={{
+                    fontWeight: "bold",
+                    color: COLORS.primary,
+                  }}>Price: {price} /=</Text>
 
               <TouchableOpacity
                 style={{

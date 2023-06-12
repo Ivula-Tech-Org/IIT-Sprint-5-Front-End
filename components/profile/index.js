@@ -14,7 +14,7 @@ const ProfileStack = ({ route }) => {
     return (
 
         <Stack.Navigator
-            initialRouteName='Dashboard'
+            initialRouteName='Profile'
             screenOptions={{
                 headerShown: false
             }}

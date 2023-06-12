@@ -1,6 +1,6 @@
-import { View, Text, Touchable, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, Touchable, TouchableOpacity, ScrollView, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { AlertBox, Banner, Deals, IconButton, MenuContainer, Options } from '../globals/utils'
+import { AlertBox, Banner, Deals, IconButton, MenuContainer,variables, Options } from '../globals/utils'
 import { fillGas } from '../globals/images'
 import utilStyles from '../globals/utils/utilStyles'
 import { Ionicons } from '@expo/vector-icons'
@@ -17,21 +17,36 @@ const Station = ({ navigation, route }) => {
     const [alertBox, setAlertBox] = useState(false)
     const [gassList, setGassList] = useState([])
     const [accList, setAccList] = useState([])
-    const [categList, setCategList] = useState([])
-    const { user, station, token } = route.params
+    const { user, station, token, categList } = route.params
     const [size, setSize] = useState()
     const [selected, setSelected] = useState()
     const [price, setPrice] = useState()
     const [cartItems, setCartItems] = useState()
+    const [filterListGass, setFilterListGass]=useState()
+    const [filterListAcc, setFilterListAcc]=useState()
 
     const filterAlert = (catName) => {
         setFilterName(catName)
         setFilterBox(false)
+        
+        const filtered = gassList.filter((item)=>{
+            return (item.name).trim() === catName.trim()
+
+
+        })
+
+        const filteredAcc = accList.filter((item)=>{
+            return (item.name).trim() === catName.trim()
+        })
+        setFilterListGass(filtered)
+        setFilterListAcc(filteredAcc)
+        console.log('here is the filtered for, ', catName,filtered)
     }
     const closePop = () => {
 
         setAlertBox(false)
         setOptions(false)
+        setSize(0)
     }
     const alertPop = () => {
 
@@ -52,7 +67,7 @@ const Station = ({ navigation, route }) => {
 
             try {
 
-                axios.get('http://192.168.1.109:8000/front_end_service/gasService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                axios.get(`${variables.HOST_URL}front_end_service/gasService`, { params: { stationId: station._id }, headers: { authorization: token } })
                     .then(async (res) => {
                         setGassList(res.data.data)
                         console.log('gass list', res.data.data)
@@ -63,7 +78,7 @@ const Station = ({ navigation, route }) => {
 
                     })
 
-                axios.get('http://192.168.1.109:8000/front_end_service/AccService', { params: { stationId: '642ad160612d3a2c11f7d070' }, headers: { authorization: token } })
+                axios.get(`${variables.HOST_URL}front_end_service/AccService`, { params: { stationId: station._id }, headers: { authorization: token } })
                     .then(async (res) => {
                         setAccList(res.data.data)
                         console.log('gass list', res.data.data)
@@ -84,13 +99,15 @@ const Station = ({ navigation, route }) => {
         <SafeAreaView
             style={[utilStyles.safeARea]}
         >
-            <Banner avator={fillGas} />
+            <Banner avator={fillGas} custom={{
+                height:'36%'
+            }}/>
             <View style={{
 
                 backgroundColor: 'white',
                 position: 'absolute',
                 right: '10%',
-                top: '45%',
+                top: '41%',
                 zIndex: 1,
                 // borderWidth:1,
                 flexDirection: 'row'
@@ -105,6 +122,8 @@ const Station = ({ navigation, route }) => {
                             setFilterBox(false)
                             setFilterName(false)
                             setFiltering(false)
+                            setFilterListGass(null)
+                            setFilterListAcc(null)
                         }}
                         custom={{
                             padding: 0
@@ -118,6 +137,7 @@ const Station = ({ navigation, route }) => {
                         borderRadius: 10,
                         paddingLeft: 15,
                         paddingRight: 15,
+                        
 
                     }}
                     RenderItem={() => {
@@ -132,7 +152,7 @@ const Station = ({ navigation, route }) => {
 
                                         flexDirection: 'row',
                                         justifyContent: 'center',
-                                        alignItems: 'center'
+                                        alignItems: 'center',
                                     }}>
                                     <Ionicons name='list' size={15} />
                                     <Text style={{
@@ -140,32 +160,23 @@ const Station = ({ navigation, route }) => {
                                     }}>Filter</Text>
                                 </TouchableOpacity>
                                 {filterBox && <View>
+                                    <FlatList
+                                    data={categList}
+                                    renderItem={(inItem)=>{
+                                        const item = inItem.item
+                                        return(
+                                            <>
+                                            
                                     <TouchableOpacity onPress={() => {
-                                        filterAlert('Afri Gas')
+                                        filterAlert(item.gasName)
                                         setFiltering(true)
                                     }} style={[utilStyles.listButtons]}>
-                                        <Text>Afri Gas</Text>
+                                        <Text>{item.gasName}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        filterAlert('K Gas')
-                                        setFiltering(true)
-
-                                    }} style={[utilStyles.listButtons]}>
-                                        <Text>K Gas</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        filterAlert('Mini Gas')
-                                        setFiltering(true)
-                                    }} style={[utilStyles.listButtons]}>
-                                        <Text>Mini Gas</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => {
-                                        filterAlert('Total Gas')
-                                        setFiltering(true)
-
-                                    }} style={[utilStyles.listButtons]}>
-                                        <Text>Total Gas</Text>
-                                    </TouchableOpacity>
+                                            </>
+                                        )
+                                    }}
+                                    />
                                 </View>}
 
                             </>
@@ -192,7 +203,7 @@ const Station = ({ navigation, route }) => {
                     setOptions(true)
                     setSelected(item)
                     console.log('clicked', item)
-                }} dealData={gassList} />
+                }} dealData={filtering?filterListGass:gassList} />
                 {/* </ScrollView> */}
 
                 <Text style={{
@@ -202,8 +213,9 @@ const Station = ({ navigation, route }) => {
                     Gass Accessories  {filtering && <>({filterName})</>}
 
                 </Text>
-                <Deals dealData={accList}
-                    onClick={() => {
+                <Deals dealData={filtering ? filterListAcc : accList}
+                    onClick={(item) => {
+                        setSelected(item)
                         setOptions(true)
 
                     }}
@@ -211,6 +223,7 @@ const Station = ({ navigation, route }) => {
             </View>
             {options &&
                 <Options
+                clickable={selected.weightRange.length > 1}
                     btnClick={async () => {
                         console.log('hello world')
                         const cartItem = {
@@ -221,6 +234,7 @@ const Station = ({ navigation, route }) => {
                             station: station._id,
                             client: user._id,
                             town: station.town,
+                            notes:'',
                             rating: station.stationRating,
                             price: price ? price : selected.weightRange[0].price,
                             size: size ? size : selected.weightRange[0].price,
@@ -243,6 +257,7 @@ const Station = ({ navigation, route }) => {
                     }}
                     add={() => {
                         // const index = selected.weightRange.map(item=>item.size).indexOf(size)
+                        console.log('this is the weigh ',selected.weightRange.length > 0)
                         let index = 0
                         selected.weightRange.forEach((item, ind) => {
                             if (size == item.size) {
@@ -286,7 +301,9 @@ const Station = ({ navigation, route }) => {
                                 }
                         }
                     }}
+                    price={price ? price : selected.weightRange[0].price}
                     size={size ? size : selected.weightRange[0].size} closePop={closePop} alertPop={alertPop} />
+                    
             }
 
             {alertBox && <AlertBox

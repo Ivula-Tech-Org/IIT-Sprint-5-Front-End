@@ -20,26 +20,29 @@ const ConfirmLocation = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState(null)
   const MapsRef = useRef(null)
   const [loadView, setLoadView]= useState(false)
+  const [lat, setLat]=useState()
+  const [long, setLong]= useState()
   const setLocator = async () => {
-    setLoader(true)
-    setErrorMessage(null)
     console.log(userDetails)
-    await axios.post('http://192.168.43.102:8000/post_location', null, { params: { lat: currRegion.latitude, long: currRegion.longitude }, headers: { authorization: userDetails } })
-      .then((res) => {
-        if (res.status == '200') {
-          setLoader(false)
-          navigation.navigate('HomeCast')
-        } else {
-          setLoader(false)
-          setErrorMessage('something went wrong')
-        }
-      })
-      .catch((err) => {
-        setLoader(false)
-        console.log(err)
-        setErrorMessage('something went wrong')
+    try{
 
-      })
+      let newLocation = {
+        lat:lat,
+        long:long
+      }
+
+      newLocation = JSON.stringify(newLocation)
+
+      await AsyncStorage.setItem('newLocation', newLocation)
+      console.log(lat, long)
+      navigation.goBack()
+  
+    }catch(err){
+      alert('something went wrong, try again')
+      console.log(err)
+    }
+
+
   }
 
 //   useEffect(()=>{
@@ -80,6 +83,8 @@ const ConfirmLocation = ({ navigation }) => {
           { accuracy: Location.Accuracy.High, timeInterval: 10000 },
           (newLocation) => {
             const { latitude, longitude } = newLocation.coords;
+            setLat(latitude)
+            setLong(longitude)
             setCurrRegion({ latitude, longitude });
             // console.log(latitude,longitude)
             setInitialRegion({ latitude: latitude, longitude: longitude })
@@ -139,7 +144,7 @@ const ConfirmLocation = ({ navigation }) => {
         {loader && <ActivityIndicator color={COLORS.primary} style={{
           marginBottom: 10
         }} />}
-        <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} />
+        <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} submit={setLocator}/>
         <LongButtonLight text={'Cancel'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
 
       </View>

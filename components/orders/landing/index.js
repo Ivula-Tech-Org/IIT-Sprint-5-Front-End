@@ -17,6 +17,7 @@ import {
   ListGas,
   MenuContainer,
   SearchBar,
+  variables,
 } from "../../globals/utils";
 import { gasLift, gasWin } from "../../globals/images";
 import { COLORS } from "../../globals/theme";
@@ -36,7 +37,7 @@ const Orders = ({ navigation }) => {
       setToken(token)
       const userDetails = jwtDecode(token);
       axios
-        .get("http://192.168.1.109:8000/orders_service", {
+        .get(`${variables.HOST_URL}orders_service`, {
           headers: { authorization: token },
           params: { requester: userDetails, forWho: "user" },
         })

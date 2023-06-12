@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
@@ -18,6 +19,7 @@ import {
   Maps,
   MenuContainer,
   ProfileCircle,
+  variables,
 } from "../globals/utils";
 import { COLORS } from "../globals/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -42,7 +44,7 @@ const Confirm = ({ navigation, route }) => {
   const { currPage, chatPage, nextPage, cartItems ,token } = route.params;
   const [markerList, setMarkerList] = useState();
   const [alertbox, setAlertBox] = useState(false);
-  
+  const notesRef = useRef()
   useEffect(()=>{
     navigation.addListener('focus',()=>{
       if(!cartItems){
@@ -56,12 +58,15 @@ const Confirm = ({ navigation, route }) => {
 
   const sendOrder = async()=>{
     console.log('this is the user token', token)
-    console.log('this is the user cart', cartItems)
-    axios.post('http://192.168.1.109:8000/orders_service', null,{headers:{authorization: token},params:{cartItems:cartItems}}).then(async(res)=>{
+    let postCart = cartItems
+    postCart.notes = notesRef.current
+
+    axios.post(`${variables.HOST_URL}orders_service`, null,{headers:{authorization: token},params:{cartItems:postCart}}).then(async(res)=>{
       console.log('helo orders here', res.data)
       if(res.data.message = 'success'){
         setAlertBox(true)
         await AsyncStorage.removeItem('CartItems')
+        navigation.reset()
 
 
       }else{
@@ -170,8 +175,21 @@ const Confirm = ({ navigation, route }) => {
     };
   }, [refreshMap]);
 
+  // useEffect(()=>{
+  //   (async ()=>{
+  //     let newLocation = await AsyncStorage.getItem('newLocation')
+  //     if(newLocation){
+
+  //       newLocation = JSON.parse(newLocation)
+  //       setRefreshMap(true)
+  //     }
+
+
+  //   })()
+  // }, [navigation])
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView >
       {alertbox && (
         <AlertBox
           closePop={async() => {
@@ -235,7 +253,7 @@ const Confirm = ({ navigation, route }) => {
                     <Text
                       style={{
                         fontWeight: "bold",
-                        colors: COLORS.primary,
+                        color: COLORS.primary,
                       }}
                     >
                       change?
@@ -265,7 +283,9 @@ const Confirm = ({ navigation, route }) => {
         }}
         RenderItem={() => {
           return (
-            <>
+            <ScrollView style={{
+              overflow:'hidden'
+            }}>
               {loadUser ? (
                 <View
                   style={{
@@ -296,6 +316,11 @@ const Confirm = ({ navigation, route }) => {
                             multiline={true}
                             style={{
                               flex: 1,
+                            }}
+                            onChangeText={(e)=>{
+                              console.log(e)
+                              notesRef.current = e
+
                             }}
                             placeholder="Add a note"
                           />
@@ -339,7 +364,6 @@ const Confirm = ({ navigation, route }) => {
                         return (
                           <TouchableOpacity
                             onPress={() => {
-                              alert(currPage);
                               navigation.navigate(currPage);
                             }}
                           >
@@ -355,7 +379,7 @@ const Confirm = ({ navigation, route }) => {
               ) : (
                 <ActivityIndicator />
               )}
-            </>
+            </ScrollView>
           );
         }}
       />
