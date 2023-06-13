@@ -20,7 +20,40 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import MapView, { Marker } from "react-native-maps";
 import { EmptyBoxLoader } from "../animation";
 import WS from "react-native-websocket";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
+class GetCateg {
+  list = [];
+  variables = {};
+  constructor(variables) {
+    this.variables = variables;
+  }
+  get listGetter() {
+    return this.list;
+  }
+  async listSetter() {
+    let token = "";
+    try {
+      token = await AsyncStorage.getItem("Token");
+    } catch (err) {
+      console.log(err);
+    }
+    axios
+      .get(`${this.variables.HOST_URL}front_end_service/categories`, {
+        headers: { authorization: token },
+      })
+      .then(async (res) => {
+        this.list = res.data.data;
+        console.log("inside ", this.list);
+        return this.list;
+      })
+      .catch((err) => {
+        alert("Sorry an error occured");
+      });
+  }
+}
 const LongButtonDark = ({ text, butStyle, textStyle, submit }) => {
   return (
     <TouchableOpacity
@@ -47,11 +80,14 @@ const variables = {
 const Banner = ({ avator, custom }) => {
   return (
     <View
-      style={[{
-        // width:'100%',
-        width: 270,
-        paddingTop: 50,
-      }, custom]}
+      style={[
+        {
+          // width:'100%',
+          width: 270,
+          paddingTop: 50,
+        },
+        custom,
+      ]}
     >
       <View
         style={{
@@ -186,7 +222,7 @@ const HeaderBar = ({ text, source, custom }) => {
     </View>
   );
 };
-const SearchBar = ({ searchLogic, custom , getText}) => {
+const SearchBar = ({ searchLogic, custom, getText }) => {
   return (
     <View
       style={[
@@ -205,7 +241,9 @@ const SearchBar = ({ searchLogic, custom , getText}) => {
     >
       <TextInput
         placeholder="type here"
-        onChangeText={getText}
+        onChangeText={(e)=>{
+          getText(e)
+        }}
         style={{
           // borderWidth:1,
           paddingLeft: 20,
@@ -229,9 +267,31 @@ const SearchBar = ({ searchLogic, custom , getText}) => {
     </View>
   );
 };
-
 const dataList = ["me", "up", "you", "and"];
-const CategBar = ({ itemList, handleCat }) => {
+const CategBar = ({  handleCat }) => {
+  const BarClass = new GetCateg(variables);
+  const[itemList, setListing]=useState('here me and me')
+  let list='one';
+  useEffect(()=>{(async () => {
+    let token = "";
+    try {
+      token = await AsyncStorage.getItem("Token");
+    } catch (err) {
+      console.log(err);
+    }
+    axios
+      .get(`${variables.HOST_URL}front_end_service/categories`, {
+        headers: { authorization: token },
+      })
+      .then(async (res) => {
+        list = res.data.data;
+        setListing(list)
+        console.log("inside ", list);
+      })
+      .catch((err) => {
+        alert("Sorry an error occured");
+      });
+  })()},[])
   return (
     <FlatList
       data={itemList}
@@ -263,7 +323,9 @@ const CategBar = ({ itemList, handleCat }) => {
         item = item.item;
         return (
           <TouchableOpacity
-            onPress={handleCat}
+            onPress={()=>{
+              handleCat(item.gasName)
+            }}
             style={{
               justifyContent: "center",
               alignItems: "center",
@@ -314,7 +376,7 @@ const Container = ({ custom, RenderItem }) => {
     </View>
   );
 };
-const ListGas = ({ listGas, custom, onClick }) => {
+const ListGas = ({ listGas, custom, onClick, loader }) => {
   return (
     <Container
       custom={custom}
@@ -334,7 +396,36 @@ const ListGas = ({ listGas, custom, onClick }) => {
             <FlatList
               data={listGas}
               ListEmptyComponent={() => {
-                return <ActivityIndicator size={20} color={COLORS.primary} />;
+                return (
+                  <>
+                  {loader ? (
+                    <ActivityIndicator
+                      style={{
+                        marginTop: 30,
+                      }}
+                      size={30}
+                      color={COLORS.primary}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "25%",
+                      }}
+                    >
+                      <EmptyBoxLoader size={"80%"} />
+                      <Text
+                        style={{
+                          marginTop: "-10%",
+                        }}
+                      >
+                        This place is empty
+                      </Text>
+                    </View>
+                  )}
+                </>
+                )
               }}
               style={{
                 flexDirection: "column",
@@ -384,7 +475,7 @@ const ListGas = ({ listGas, custom, onClick }) => {
                         backgroundColor: COLORS.primary,
                         padding: 10,
                         paddingBottom: 5,
-                        minHeight:70
+                        minHeight: 70,
                       }}
                     >
                       <Text
@@ -497,7 +588,15 @@ const MenuContainer = ({ RenderItem, custom }) => {
     </View>
   );
 };
-const GasPlate = ({ custom, loader, onClick, dataList, params, config }) => {
+const GasPlate = ({
+  custom,
+  optiontier,
+  loader,
+  onClick,
+  dataList,
+  params,
+  config,
+}) => {
   return (
     <Container
       custom={custom}
@@ -564,15 +663,17 @@ const GasPlate = ({ custom, loader, onClick, dataList, params, config }) => {
                 return (
                   <TouchableOpacity
                     onPress={() => {
-                      config &&
-                        config.navigation.navigate(config.to, {
-                          currPage: config.params.currPage,
-                          chatPage: config.params.chatPage,
-                          nextPage: config.params.chatPage,
-                          nextPage: config.params.nextPage,
-                          token: config.params.token,
-                          cartItems: item,
-                        });
+                      optiontier === "Done"
+                        ? alert("This item is done")
+                        : config &&
+                          config.navigation.navigate(config.to, {
+                            currPage: config.params.currPage,
+                            chatPage: config.params.chatPage,
+                            nextPage: config.params.chatPage,
+                            nextPage: config.params.nextPage,
+                            token: config.params.token,
+                            cartItems: item,
+                          });
                       onClick && onClick(item);
                     }}
                     style={{
@@ -733,8 +834,7 @@ const Maps = ({
               markerList.map((item, index) => {
                 return (
                   <Marker
-                  key={index}
-
+                    key={index}
                     coordinate={{
                       // latitude: currRegion.latitude,
                       latitude: parseFloat(item.lat),
@@ -752,7 +852,7 @@ const Maps = ({
     </View>
   );
 };
-const Deals = ({ custom, onClick, dealData }) => {
+const Deals = ({ custom, onClick, dealData ,loader}) => {
   return (
     <>
       <FlatList
@@ -775,12 +875,16 @@ const Deals = ({ custom, onClick, dealData }) => {
           const priceList =
             item.weightRange &&
             item.weightRange.map((value) => parseInt(value.price));
-            
+
           // const minValue = Math.min(...sizeList)
           const minSize = item.weightRange && Math.min(...sizeList);
           const maxSize = item.weightRange && Math.max(...sizeList);
-          const minPrice = item.weightRange && Math.min(...priceList);
-          const maxPrice = item.weightRange && Math.max(...priceList);
+          const minPrice = item.weightRange
+            ? Math.min(...priceList)
+            : item.price;
+          const maxPrice = item.weightRange
+            ? Math.max(...priceList)
+            : item.price;
           console.log(item.image);
           const gasImage = gasImage in item ? item.gasImage : item.image;
           const deliveryTime =
@@ -829,8 +933,13 @@ const Deals = ({ custom, onClick, dealData }) => {
                       fontSize: 10,
                     }}
                   >
-                    {minSize == maxSize ? <Text>{minSize} kg</Text> : <Text>{minSize} - {maxSize} kg</Text>}
-                    
+                    {minSize == maxSize ? (
+                      <Text>{minSize} kg</Text>
+                    ) : (
+                      <Text>
+                        {minSize} - {maxSize} kg
+                      </Text>
+                    )}
                   </Text>
                 )}
 
@@ -848,7 +957,13 @@ const Deals = ({ custom, onClick, dealData }) => {
                     left: "180%",
                   }}
                 >
-                    {minPrice == maxPrice ? <Text>{minPrice} /=</Text> : <Text>{minPrice} - {maxPrice} /=</Text>}
+                  {minPrice == maxPrice ? (
+                    <Text>{minPrice} /=</Text>
+                  ) : (
+                    <Text>
+                      {minPrice} - {maxPrice} /=
+                    </Text>
+                  )}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -856,9 +971,34 @@ const Deals = ({ custom, onClick, dealData }) => {
         }}
         ListEmptyComponent={() => {
           return (
-            <View>
-              <Text>No Deals here</Text>
-            </View>
+            <>
+                  {loader ? (
+                    <ActivityIndicator
+                      style={{
+                        marginTop: 30,
+                      }}
+                      size={30}
+                      color={COLORS.primary}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: "25%",
+                      }}
+                    >
+                      <EmptyBoxLoader size={"80%"} />
+                      <Text
+                        style={{
+                          marginTop: "-10%",
+                        }}
+                      >
+                        This place is empty
+                      </Text>
+                    </View>
+                  )}
+                </>
           );
         }}
       />
@@ -866,7 +1006,16 @@ const Deals = ({ custom, onClick, dealData }) => {
   );
 };
 
-const Options = ({ size,price, clickable, closePop, btnClick, alertPop, add, remove }) => {
+const Options = ({
+  size,
+  price,
+  clickable,
+  closePop,
+  btnClick,
+  alertPop,
+  add,
+  remove,
+}) => {
   return (
     <View
       style={{
@@ -918,16 +1067,17 @@ const Options = ({ size,price, clickable, closePop, btnClick, alertPop, add, rem
                 >
                   Weight :{" "}
                 </Text>
-                {clickable  &&
-                <IconButton
-                  onClick={remove}
-                  icon={"remove-outline"}
-                  size={{ box: 20, icon: 13 }}
-                  custom={{
-                    padding: 1,
-                    marginLeft: 10,
-                  }}
-                />}
+                {clickable && (
+                  <IconButton
+                    onClick={remove}
+                    icon={"remove-outline"}
+                    size={{ box: 20, icon: 13 }}
+                    custom={{
+                      padding: 1,
+                      marginLeft: 10,
+                    }}
+                  />
+                )}
                 <Text>{clickable}</Text>
                 <Text
                   style={{
@@ -937,22 +1087,26 @@ const Options = ({ size,price, clickable, closePop, btnClick, alertPop, add, rem
                 >
                   {size}
                 </Text>
-                {clickable &&
-                <IconButton
-                  onClick={add}
-                  icon={"add-outline"}
-                  size={{ box: 20, icon: 13 }}
-                  custom={{
-                    marginLeft: 7,
-                    padding: 1,
-                  }}
-                />}
-
+                {clickable && (
+                  <IconButton
+                    onClick={add}
+                    icon={"add-outline"}
+                    size={{ box: 20, icon: 13 }}
+                    custom={{
+                      marginLeft: 7,
+                      padding: 1,
+                    }}
+                  />
+                )}
               </View>
-              <Text style={{
-                    fontWeight: "bold",
-                    color: COLORS.primary,
-                  }}>Price: {price} /=</Text>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  color: COLORS.primary,
+                }}
+              >
+                Price: {price} /=
+              </Text>
 
               <TouchableOpacity
                 style={{

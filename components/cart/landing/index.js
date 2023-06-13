@@ -18,7 +18,7 @@ import {
 import { gasLift, gasWin } from "../../globals/images";
 import { COLORS } from "../../globals/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 const Cart = ({ navigation }) => {
   const dummyList = [
     { gasName: "Total", gasImage: gasWin },
@@ -31,32 +31,44 @@ const Cart = ({ navigation }) => {
   const [loader, setLoader] = useState(true);
   const [total, setTotal] = useState();
   const [userToken, setUserToken] = useState();
+  const [reloader, setReloader] = useState(false);
+
+  const isfocused = useIsFocused();
 
   useEffect(() => {
-    const getData = navigation.addListener("focus", async () => {
-      let cartItems = await AsyncStorage.getItem("CartItems");
-      if(cartItems){
-      cartItems = JSON.parse(cartItems);
-      setCart(cartItems.reverse());
-      console.log(cartItems);
-      const cartPrice = cartItems.map((item) => parseInt(item.price));
-      const add = (val, a) => {
-        return val + a;
-      };
-      let sum = cartPrice.reduce(add, 0);
-      setTotal(sum);
-      setLoader(false);
+    
+    if (isfocused) {
+      (async () => {
+        setLoader(true)
+        let cartItems = await AsyncStorage.getItem("CartItems");
+
+        if (cartItems) {
+          cartItems = JSON.parse(cartItems);
+          setCart(cartItems.reverse());
+          console.log(cartItems);
+          const cartPrice = cartItems.map((item) => parseInt(item.price));
+          const add = (val, a) => {
+            return val + a;
+          };
+          let sum = cartPrice.reduce(add, 0);
+          setTotal(sum);
+          setLoader(false);
+        }else{
+          setTotal(0)
+          setCart([])
+          setLoader(false)
+        }
+      })();
     }
-    });
-    return getData;
-  }, [navigation]);
-useEffect(()=>{
-  (async()=>{
-    const userToken = await AsyncStorage.getItem('Token')
-    console.log(userToken)
-    setUserToken(userToken)
-  })()
-}, [])
+  }, [isfocused]);
+  
+  useEffect(() => {
+    (async () => {
+      const userToken = await AsyncStorage.getItem("Token");
+      console.log(userToken);
+      setUserToken(userToken);
+    })();
+  }, []);
   return (
     <SafeAreaView style={{}}>
       <HeaderBar text={"Cart"} source={gasLift} />
@@ -109,7 +121,7 @@ useEffect(()=>{
                   color: COLORS.primary,
                 }}
               >
-                {total}
+                {total} /=
               </Text>
               <MenuContainer
                 custom={{
@@ -123,14 +135,18 @@ useEffect(()=>{
                   return (
                     <TouchableOpacity
                       onPress={() => {
+                        
                         if (cart.length > 0) {
                           navigation.navigate("Confirm", {
                             currPage: "Cartie",
                             chatPage: "Chat",
                             nextPage: "CallChat",
                             cartItems: cart,
-                            token:userToken
+                            token: userToken,
                           });
+                          setLoader(true)
+                          setCart([])
+                          setTotal(0)
                         } else {
                           alert("nothing to check out");
                         }

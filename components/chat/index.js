@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   ActivityIndicatorBase,
   FlatList,
+  ImageBackground,
   ScrollView,
   Text,
   TextInput,
@@ -16,6 +17,7 @@ import chatStyles from "./style";
 import { Ionicons } from "@expo/vector-icons";
 import { io } from "socket.io-client";
 import { COLORS } from "../globals/theme";
+import { variables } from "../globals/utils";
 
 const Chat = ({ navigation, route }) => {
   const isFocused = useIsFocused();
@@ -26,12 +28,12 @@ const Chat = ({ navigation, route }) => {
   const [loader, setLoader] = useState(false);
   const [room, setRoom] = useState("");
   const [refresh, setRefresh] = useState(false);
-  const {clientID, contID, tier} = route.params
+  const {clientID, contID, tier, cart} = route.params
   const [messageList, setMessageList] = useState([])
   // const [room, setRoom] = useState('room1')
 
   useEffect(() => {
-    const newSocket = io("http://192.168.1.109:8000");
+    const newSocket = io(`${variables.HOST_URL}`);
     setSocket(newSocket);
     setRoom(`${clientID}_${contID}`);
 
@@ -96,8 +98,18 @@ const Chat = ({ navigation, route }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <View style={chatStyles.avatorBox}>
-          <View style={chatStyles.avator}></View>
-          <Text style={chatStyles.avatorName}>name</Text>
+          <View style={chatStyles.avator}>
+            <ImageBackground
+            style={{
+              height:'100%',
+              width:'100%'
+              ,backgroundColor:'white',
+
+            }}
+              source={{ uri: `${cart.image}` }}
+            />
+          </View>
+          <Text style={chatStyles.avatorName}>{cart.name}</Text>
         </View>
         <View>
           <View style={{ height: "80%", padding: "5%" }}>
@@ -151,7 +163,9 @@ const Chat = ({ navigation, route }) => {
           <View style={{ marginLeft: "10%" }}>
             {indicator && <TypingIndicator />}
           </View>
-          <View style={chatStyles.innerBox}>
+          <View style={[chatStyles.innerBox,{
+            paddingBottom:20
+          }]}>
             <TextInput
               onChangeText={(e) => {
                 handleTyping();

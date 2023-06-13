@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Linking } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logInStyle from '../login/style'
-import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight } from '../globals/utils'
+import { Back, Banner, ErrorBox, InputText, LongButtonDark, LongButtonLight, variables } from '../globals/utils'
 import utilStyles from '../globals/utils/utilStyles'
 import { fillGas, orders } from '../globals/images'
 import { useState } from 'react'
@@ -47,9 +47,11 @@ const SignUp = ({ navigation,route }) => {
                             setErrorMessage('something went wrong')
                             setLoader(false)
                             console.log(err)
+
                         }
                     }else{
                         setErrorMessage('something went wrong')
+
                     }
                 }).catch((err)=>{
                     if(err.response){
@@ -65,6 +67,8 @@ const SignUp = ({ navigation,route }) => {
             }catch(err){
                 setLoader(false)
                 setErrorMessage('Sory, something went wrong')
+                console.log('yw a', err)
+
             }
         }else{
             setLoader(false)
@@ -164,7 +168,7 @@ const SignUp = ({ navigation,route }) => {
                         paddingRight: '17%'
                     }}
                     onPress={()=>{
-                        Linking.openURL('uri: http://eltus.ivula.co.ke')
+                        Linking.openURL('http://eltus.ivula.co.ke')
                     }}
                 >
                     <Text style={{

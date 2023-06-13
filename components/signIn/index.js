@@ -38,10 +38,10 @@ const SignIn = ({navigation})=>{
                     paddingRight:'17%'
                 }}
                 >
-                <Text style={{
+                {/* <Text style={{
                     textAlign:'right',
                     fontSize:12
-                }}>Continue without sign in?</Text>
+                }}>Continue without sign in?</Text> */}
 
                 </TouchableOpacity>
             </View>

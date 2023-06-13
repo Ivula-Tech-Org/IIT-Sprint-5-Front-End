@@ -229,7 +229,7 @@ const Station = ({ navigation, route }) => {
                         const cartItem = {
                             service: selected.service,
                             item: selected._id,
-                            name:selected.name,
+                            name:station.stationName,
                             image:selected.image,
                             station: station._id,
                             client: user._id,
@@ -241,6 +241,7 @@ const Station = ({ navigation, route }) => {
                             estTime : selected.deliveryTime,
                             location : station.stationLocation
                             ,phoneNumber:station.phoneNumber
+                            ,gasCategories:selected.name
                         }
                         let cart = await AsyncStorage.getItem('CartItems')
                         if (cart) {

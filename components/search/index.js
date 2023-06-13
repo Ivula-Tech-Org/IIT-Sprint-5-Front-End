@@ -32,6 +32,8 @@ const Search = ({ navigation }) => {
   const [categList, setCategList] = useState([]);
   const [userToken, setUserToken] = useState("default");
   const [userDetials, setUserDetails] = useState();
+  const [dupGassList, setDupGassList] = useState();
+  const [dupAccList, setDupAccList] = useState();
 
   useEffect(() => {
     (async () => {
@@ -101,21 +103,20 @@ const Search = ({ navigation }) => {
           setSearchText(e);
         }}
         searchLogic={() => {
-          const duplicate = gassDeals;
-          const results = duplicate.filter((element) => {
-            JSON.stringify(element)
+          const results = gassDeals.filter((element) => {
+            return JSON.stringify(element)
               .toLowerCase()
-              .includes(searchText.toLowerCase());
+              .includes(searchText.trim().toLowerCase());
           });
-          setGassDeals(results);
+          setDupGassList(results);
 
-          const anotherDuplicate = AccDeals;
-          const anotherResults = anotherDuplicate.filter((element) => {
+          console.log('yo',dupGassList)
+          const anotherResults = AccDeals.filter((element) => {
             JSON.stringify(element)
               .toLowerCase()
-              .includes(searchText.toLowerCase());
+              .includes(searchText.trim().toLowerCase());
           });
-          setAccDeals(anotherResults);
+          setDupAccList(anotherResults);
         }}
         custom={{
           marginTop: 10,
@@ -142,7 +143,7 @@ const Search = ({ navigation }) => {
             height: "40%",
           }}
           onClick={async (item) => {
-            console.log("this is the selecdted ", item.gassStationName);
+            console.log("this is the selected ", item.gassStationName);
             const token = item.gassStationName;
             axios
               .get(
@@ -165,7 +166,7 @@ const Search = ({ navigation }) => {
                 console.log(err);
               });
           }}
-          dealData={gassDeals}
+          dealData={dupGassList ? dupGassList : gassDeals}
         />
         {/* </ScrollView> */}
 
@@ -181,7 +182,7 @@ const Search = ({ navigation }) => {
           custom={{
             height: "35%",
           }}
-          dealData={AccDeals}
+          dealData={dupAccList ? dupAccList : AccDeals}
           onClick={() => {
             navigation.navigate("Station");
           }}

@@ -12,6 +12,7 @@ const chatStyles = StyleSheet.create({
         width:60,
         borderRadius:100,
         alignSelf:'flex-end'
+        ,overflow:'hidden'
     },
     avatorName:{
         marginTop:'-6%',

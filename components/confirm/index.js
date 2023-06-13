@@ -41,43 +41,65 @@ const Confirm = ({ navigation, route }) => {
   const MapsRef = useRef(null);
   const [loadUser, setLoadUser] = useState(false);
   const [refreshMap, setRefreshMap] = useState(false);
-  const { currPage, chatPage, nextPage, cartItems ,token } = route.params;
+  const { currPage, chatPage, nextPage, cartItems, token } = route.params;
   const [markerList, setMarkerList] = useState();
   const [alertbox, setAlertBox] = useState(false);
-  const notesRef = useRef()
-  useEffect(()=>{
-    navigation.addListener('focus',()=>{
-      if(!cartItems){
-          navigation.navigate('Cartie')
+  const notesRef = useRef();
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      if (!cartItems) {
+        navigation.navigate("Cartie");
       }
-    })
-  },[navigation])
+    });
+  }, [navigation]);
   const skipLocator = () => {
     navigation.navigate("HomeCast");
   };
 
-  const sendOrder = async()=>{
-    console.log('this is the user token', token)
-    let postCart = cartItems
-    postCart.notes = notesRef.current
+  const updateOrder = async (method, to) => {
+    console.log("to update", token);
+    axios
+      .post(
+        `${variables.HOST_URL}update_service/update_order`,
+        {
+          cartItems: cartItems,
+          method: method,
+          to: to,
+        },
+        { headers: { authorization: token } }
+      )
+      .then((res) => {
+        alert("The Order was updated succesfully");
+        navigation.navigate(currPage);
+      })
+      .catch((err) => {
+        alert("something went wrong try again");
+        console.log(err);
+      });
+  };
 
-    axios.post(`${variables.HOST_URL}orders_service`, null,{headers:{authorization: token},params:{cartItems:postCart}}).then(async(res)=>{
-      console.log('helo orders here', res.data)
-      if(res.data.message = 'success'){
-        setAlertBox(true)
-        await AsyncStorage.removeItem('CartItems')
-        navigation.reset()
+  const sendOrder = async () => {
+    console.log("this is the user token", token);
+    let postCart = cartItems;
+    postCart.notes = notesRef.current;
 
-
-      }else{
-        alert(res.data.message)
-      }
-
-    }).catch((err)=>{
-      alert(err.message)
-    })
-
-  }
+    axios
+      .post(`${variables.HOST_URL}orders_service`, null, {
+        headers: { authorization: token },
+        params: { cartItems: postCart },
+      })
+      .then(async (res) => {
+        console.log("helo orders here", res.data);
+        if ((res.data.message = "success")) {
+          setAlertBox(true);
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        alert(err.message);
+      });
+  };
 
   useEffect(() => {
     (async () => {
@@ -125,7 +147,6 @@ const Confirm = ({ navigation, route }) => {
               longitudeDelta: 0.02,
             };
 
-            
             //to remove on debug
             // cartItems[0].location.long =
             //   parseFloat(cartItems[0].location.long) + 10;
@@ -184,26 +205,29 @@ const Confirm = ({ navigation, route }) => {
   //       setRefreshMap(true)
   //     }
 
-
   //   })()
   // }, [navigation])
 
   return (
-    <SafeAreaView >
+    <SafeAreaView>
       {alertbox && (
         <AlertBox
-          closePop={async() => {
-            setAlertBox(false);
+          closePop={async () => {
+            await AsyncStorage.removeItem("CartItems");
+            navigation.navigate("Cartie");
             navigation.navigate("Order");
+            setAlertBox(false);
           }}
           options={{
             main: "Your order will be processed and delivered",
             left: "ok",
             right: "orders",
           }}
-          navTo={async() => {
+          navTo={async () => {
+            await AsyncStorage.removeItem("CartItems");
+            navigation.navigate("Cartie");
             navigation.navigate("Order");
-            setAlertBox(false)
+            setAlertBox(false);
             // alert()
             // sendOrder()
           }}
@@ -283,9 +307,11 @@ const Confirm = ({ navigation, route }) => {
         }}
         RenderItem={() => {
           return (
-            <ScrollView style={{
-              overflow:'hidden'
-            }}>
+            <ScrollView
+              style={{
+                overflow: "hidden",
+              }}
+            >
               {loadUser ? (
                 <View
                   style={{
@@ -317,10 +343,9 @@ const Confirm = ({ navigation, route }) => {
                             style={{
                               flex: 1,
                             }}
-                            onChangeText={(e)=>{
-                              console.log(e)
-                              notesRef.current = e
-
+                            onChangeText={(e) => {
+                              console.log(e);
+                              notesRef.current = e;
                             }}
                             placeholder="Add a note"
                           />
@@ -342,7 +367,10 @@ const Confirm = ({ navigation, route }) => {
                       return (
                         <TouchableOpacity
                           onPress={() => {
-                            sendOrder()
+                            console.log(currPage);
+                            currPage === "Dashboard"
+                              ? updateOrder("update", "Waiting")
+                              : sendOrder();
                           }}
                         >
                           <Text>confirm</Text>
@@ -350,7 +378,6 @@ const Confirm = ({ navigation, route }) => {
                       );
                     }}
                   />
-                  {userDetails.tier == "contractor" ? (
                     <MenuContainer
                       custom={{
                         paddingLeft: 20,
@@ -364,6 +391,9 @@ const Confirm = ({ navigation, route }) => {
                         return (
                           <TouchableOpacity
                             onPress={() => {
+                              currPage === "Dashboard"
+                                ? updateOrder("cancel", "Cancel")
+                                : sendOrder();
                               navigation.navigate(currPage);
                             }}
                           >
@@ -372,9 +402,6 @@ const Confirm = ({ navigation, route }) => {
                         );
                       }}
                     />
-                  ) : (
-                    <></>
-                  )}
                 </View>
               ) : (
                 <ActivityIndicator />

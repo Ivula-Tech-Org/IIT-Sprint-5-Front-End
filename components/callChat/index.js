@@ -1,58 +1,67 @@
-import { Text, View, ActivityIndicator, TouchableOpacity, Linking } from 'react-native'
-import { useEffect, useRef, useState, } from 'react'
-import * as Location from 'expo-location'
-import { Container, IconButton, Maps, MenuContainer, ProfileCircle } from '../globals/utils'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { gasLift } from '../globals/images'
-import jwtDecode from 'jwt-decode'
+import {
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import { useEffect, useRef, useState } from "react";
+import * as Location from "expo-location";
+import {
+  Container,
+  IconButton,
+  Maps,
+  MenuContainer,
+  ProfileCircle,
+} from "../globals/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { gasLift } from "../globals/images";
+import jwtDecode from "jwt-decode";
 
-const CallChat = ({ navigation ,route}) => {
+const CallChat = ({ navigation, route }) => {
   const [currRegion, setCurrRegion] = useState({
     latitude: -1.3198768,
-    longitude: 36.8998693
-  })
+    longitude: 36.8998693,
+  });
   const [error, setError] = useState();
-  const [initialRegion, setInitialRegion] = useState()
-  const [errorMessage, setErrorMessage] = useState()
-  const [loader, setLoader] = useState()
-  const [userDetails, setUserDetails] = useState(null)
-  const MapsRef = useRef(null)
-  const [loadUser, setLoadUser] = useState(false)
-  const [refreshMap,setRefreshMap] = useState((false))
-  const {currPage,nextPage, cartItems} = route.params
+  const [initialRegion, setInitialRegion] = useState();
+  const [errorMessage, setErrorMessage] = useState();
+  const [loader, setLoader] = useState();
+  const [userDetails, setUserDetails] = useState(null);
+  const MapsRef = useRef(null);
+  const [loadUser, setLoadUser] = useState(false);
+  const [refreshMap, setRefreshMap] = useState(false);
+  const { currPage, nextPage, cartItems } = route.params;
 
   const skipLocator = () => {
-    navigation.navigate('HomeCast')
-  }
+    navigation.navigate("HomeCast");
+  };
   useEffect(() => {
     (async () => {
-      const token = await AsyncStorage.getItem('Token')
+      const token = await AsyncStorage.getItem("Token");
       if (token) {
-
-        const details = jwtDecode(token)
-        if(details){
-
-          setUserDetails(details)
-          console.log('hii hapau',details.userName)
-          setLoadUser(true)
-        }else{
-          console.log('something')
+        const details = jwtDecode(token);
+        if (details) {
+          setUserDetails(details);
+          console.log("hii hapau", details.userName);
+          setLoadUser(true);
+        } else {
+          console.log("something");
         }
-        
       }
-      setRefreshMap(false)
-    })()
-  },[refreshMap])
+      setRefreshMap(false);
+    })();
+  }, [refreshMap]);
 
   useEffect(() => {
     let subscription;
-console.log('user login')
+    console.log("user login");
     const getLocationAsync = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setError('Permission to access location denied');
+        if (status !== "granted") {
+          setError("Permission to access location denied");
           return;
         }
 
@@ -63,44 +72,48 @@ console.log('user login')
             setCurrRegion({ latitude, longitude });
             // console.log(latitude,longitude)
             // cartItems.Location.long = cartItems.Location.long + 10
-            setInitialRegion({ latitude: latitude, longitude: longitude })
-            
+            setInitialRegion({ latitude: latitude, longitude: longitude });
+
             const clientRegion = {
               latitude: latitude,
               longitude: longitude,
               latitudeDelta: 0.02,
-              longitudeDelta: 0.02
-            }
+              longitudeDelta: 0.02,
+            };
 
             const suppRegion = {
-                latitude: cartItems.location.lat,
-                longitude: cartItems.location.long,
-                latitudeDelta: 0.02,
-                longitudeDelta: 0.02
-              }
-  
-              let minLat = Math.min(clientRegion.latitude, suppRegion.latitude)
-              let maxLat = Math.max(clientRegion.latitude, suppRegion.latitude)
-              let minLong = Math.min(clientRegion.longitude, suppRegion.longitude)
-              let maxLong = Math.max(clientRegion.longitude, suppRegion.longitude)
-              const finalRegion = {
-                latitude: (minLat + maxLat) / 2,
-                longitude: (minLong + maxLong) / 2,
-                latitudeDelta: (maxLat - minLat) * 2.2,
-                longitudeDelta: (maxLong - minLong) * 2.2,
-              }
-              MapsRef.current.animateToRegion(finalRegion, 500)
-  
+              latitude: cartItems.location.lat,
+              longitude: cartItems.location.long,
+              latitudeDelta: 0.02,
+              longitudeDelta: 0.02,
+            };
 
+            let minLat = Math.min(clientRegion.latitude, suppRegion.latitude);
+            let maxLat = Math.max(clientRegion.latitude, suppRegion.latitude);
+            let minLong = Math.min(
+              clientRegion.longitude,
+              suppRegion.longitude
+            );
+            let maxLong = Math.max(
+              clientRegion.longitude,
+              suppRegion.longitude
+            );
+            const finalRegion = {
+              latitude: (minLat + maxLat) / 2,
+              longitude: (minLong + maxLong) / 2,
+              latitudeDelta: (maxLat - minLat) * 2.2,
+              longitudeDelta: (maxLong - minLong) * 2.2,
+            };
+            MapsRef.current.animateToRegion(finalRegion, 500);
           }
         );
       } catch (error) {
-        setError('Error retrieving location');
+        setError("Error retrieving location");
       }
     };
 
     getLocationAsync();
-setRefreshMap(false)
+    setRefreshMap(false);
     return () => {
       if (subscription) {
         subscription.remove();
@@ -109,48 +122,56 @@ setRefreshMap(false)
   }, [refreshMap]);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1 }}
-    >
+    <SafeAreaView style={{ flex: 1 }}>
       <Maps
         withRef={MapsRef}
         withMarker={false}
         currRegion={currRegion}
         tracer={true}
         custom={{
-          height: '61%'
+          height: "61%",
         }}
         markerList={[cartItems.location]}
       />
-            <IconButton onClick={()=>{
-              setRefreshMap(true)
-            }} icon={'refresh'} size={{box:30,icon:15}} custom={{
-              marginTop:'-25%',
-              alignSelf:'flex-end',
-              marginRight:'10%',
-              backgroundColor:'white'
-            }}/>
+      <IconButton
+        onClick={() => {
+          setRefreshMap(true);
+        }}
+        icon={"refresh"}
+        size={{ box: 30, icon: 15 }}
+        custom={{
+          marginTop: "-25%",
+          alignSelf: "flex-end",
+          marginRight: "10%",
+          backgroundColor: "white",
+        }}
+      />
 
       <Container
-
         custom={{
-          marginTop: '3%',
-          height: '47%'
+          marginTop: "3%",
+          height: "47%",
         }}
         RenderItem={() => {
           return (
             <>
-              {loadUser ?
-                <View style={{
-                  justifyContent:'center',
-                  alignItems: 'center',
-                  marginTop:'10%'
-                }}>
-                  <Text style={{
-                    marginBottom:5,
-                    fontWeight:'bold',
-                    marginTop:-5
-                  }}>Your Order is being processed</Text>
+              {loadUser ? (
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "10%",
+                  }}
+                >
+                  <Text
+                    style={{
+                      marginBottom: 5,
+                      fontWeight: "bold",
+                      marginTop: -5,
+                    }}
+                  >
+                    Your Order is being processed
+                  </Text>
                   <ProfileCircle
                     source={gasLift}
                     custom={{
@@ -158,72 +179,78 @@ setRefreshMap(false)
                       width: 100,
                     }}
                   />
-                  <Text>
-                    {userDetails.userName}
-                  </Text>
-                  <Text>
-                    {userDetails.phoneNumber}
-                  </Text>
+                  <Text>{cartItems.name}</Text>
+                  <Text>{cartItems.phoneNumber}</Text>
                   <View
-                  style={{
-                    height:'10%'
-                  }}
+                    style={{
+                      height: "10%",
+                    }}
                   ></View>
                   <MenuContainer
-                  custom={{
-                    paddingLeft:20,
-                    paddingRight:20,
-                    borderRadius:8,
-                    marginTop:'3%',
-                    // alignItems:'flex-start'
-                    right:'-20%'
-                  }}
+                    custom={{
+                      paddingLeft: 20,
+                      paddingRight: 20,
+                      borderRadius: 8,
+                      marginTop: "3%",
+                      // alignItems:'flex-start'
+                      right: "-20%",
+                    }}
                     RenderItem={() => {
                       return (
                         <TouchableOpacity
-
                           onPress={() => {
-                            console.log('these are the passed ids : ',cartItems.clientID, cartItems.contID)
-                            navigation.navigate(nextPage,{clientID:cartItems.clientID,contID:cartItems.contID,tier:userDetails.tier})
+                            console.log(
+                              "these are the passed ids : ",
+                              cartItems.clientID,
+                              cartItems.contID
+                            );
+                            navigation.navigate(nextPage, {
+                              clientID: cartItems.clientID,
+                              contID: cartItems.contID,
+                              tier: userDetails.tier,
+                              cart: cartItems,
+                            });
                           }}
                         >
                           <Text>chat</Text>
                         </TouchableOpacity>
-                      )
+                      );
                     }}
                   />
                   <MenuContainer
-                  custom={{
-                    paddingLeft:20,
-                    paddingRight:20,
-                    borderRadius:8,
-                    marginTop:'-10%',
-                    // alignItems:'flex-start'
-                    right:'20%'
-                  }}
+                    custom={{
+                      paddingLeft: 20,
+                      paddingRight: 20,
+                      borderRadius: 8,
+                      marginTop: "-10%",
+                      // alignItems:'flex-start'
+                      right: "20%",
+                    }}
                     RenderItem={() => {
                       return (
                         <TouchableOpacity
-
                           onPress={() => {
-                            const number = cartItems.phoneNumber | ' 0741741381'
-                            Linking.openURL(`tel: ${number}`)
-                            // navigation.navigate('HomeCast')
+                            const number =
+                              cartItems.phoneNumber || " 0741741381";
+                            Linking.openURL(`tel: ${number}`);
+                            navigation.navigate(currPage)
                           }}
                         >
                           <Text>call</Text>
                         </TouchableOpacity>
-                      )
+                      );
                     }}
                   />
-                </View> : <ActivityIndicator />}
+                </View>
+              ) : (
+                <ActivityIndicator />
+              )}
             </>
-
-          )
+          );
         }}
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default CallChat
+export default CallChat;

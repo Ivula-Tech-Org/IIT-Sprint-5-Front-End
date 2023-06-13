@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AlertBox, CategBar, Deals, HeaderBar } from "../../globals/utils";
+import { AlertBox, CategBar, Deals, HeaderBar, variables } from "../../globals/utils";
 import { gasLift, gasWin } from "../../globals/images";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,38 +21,59 @@ const ListPlate = ({ navigation, route }) => {
   const [userToken, setUserToken] = useState()
   const [userDetails, setUserDetails] = useState()
   const [categList, setCategList]=useState([])
-  
-  useEffect(() => {
-    (async () => {
-      const token = await AsyncStorage.getItem("Token");
-      const details = jwtDecode(token);
-      console.log("this is the token", token);
-      setUserToken(token);
-      setUserDetails(details);
+  const [selected, setSelected] = useState();
+  const [filterList, setFilterList]=useState()
+  const [loader, setLoader]=useState(true)
+useEffect(()=>{
+  (async ()=>{
+    const token = await AsyncStorage.getItem('Token')
+    setUserToken(token)
+  })()
+})
+  const updateOrder = async (method, to) => {
+    const cartItems = selected
+    axios
+      .post(
+        `${variables.HOST_URL}update_service/update_order`,
+        {
+          cartItems: cartItems,
+          method: method,
+          to: to,
+        },
+        { headers: { authorization: userToken } }
+      )
+      .then((res) => {
+        alert("The Order was updated succesfully");
+        navigation.navigate('Dashboard');
+      })
+      .catch((err) => {
+        alert("something went wrong try again");
+        console.log(err);
+      });
+  };
 
-      axios
-        .get(`${variables.HOST_URL}front_end_service/categories`, {
-          headers: { authorization: token },
-        })
-        .then(async (res) => {
-          setUserToken(res.data.token);
-          setCategList(res.data.data);
-
-          await AsyncStorage.setItem("Token", res.data.token);
-        })
-        .catch((err) => {
-          alert("Sorry an error occured");
-        });
-    })();
-  },[]);
+  const filterByCateg = (itemString) => {
+    setLoader(true)
+    let list = gasList.filter((item) => {
+      console.log(item);
+      console.log(item.gasCategories);
+      return JSON.stringify(item)
+        .toLocaleLowerCase()
+        .includes(itemString.toLocaleLowerCase());
+    });
+    console.log(list);
+    setFilterList(list);
+    setLoader(false)
+  };
   return (
     <SafeAreaView>
       <HeaderBar text={title} source={gasLift} custom={{ left: "350%" }} />
 
       <CategBar
         itemList={categList}
-        handleCat={() => {
-          alert("handle");
+        handleCat={(e) => {
+          console.log(e)
+          filterByCateg(e)
         }}
       />
       <View
@@ -76,28 +97,33 @@ const ListPlate = ({ navigation, route }) => {
             height: "40%",
           }}
           onClick={(item) => {
+            setSelected(item)
             if (title == "Orders") {
               navigation.navigate("DConfirm", {
                 currPage: "Dashboard",
                 chatPage: "DChat",
                 cartItems:[item],
                 nextPage: "DCallChat",
+                token:userToken
               });
-            } else if (title == "Confirmed" || title == "Waiting") {
-              setAlertBox(true);
+            } else if ( title == "Waiting") {
+              setAlertBox(true)
             } else if (title == "Canceled") {
               alert("You canceled this order");
+            }else if(title == 'Done'){
+              alert("This order has been completed")
             }
           }}
-          dealData={gasList}
+          loader={loader}
+
+          dealData={filterList ? filterList : gasList}
         />
         {/* </ScrollView> */}
       </View>
       {alertBox && (
         <AlertBox
           navTo={() => {
-            alert("remove here");
-            setAlertBox(false);
+            updateOrder("done","Done")
           }}
           options={{ main: "Is this delivered?", left: "No", right: "Yes" }}
           closePop={() => {

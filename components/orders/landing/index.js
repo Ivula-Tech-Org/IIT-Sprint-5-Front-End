@@ -24,6 +24,10 @@ import { COLORS } from "../../globals/theme";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwtDecode from "jwt-decode";
+import { ActivityIndicator } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import { RadioButton } from "react-native-paper";
+
 const Orders = ({ navigation }) => {
   const dummyList = [
     { gasName: "Total", gasImage: gasWin },
@@ -31,8 +35,14 @@ const Orders = ({ navigation }) => {
   ];
   const [orderList, setOrderList] = useState([]);
   const [token, setToken] = useState()
+  const [loader, setLoader]=useState(true)
+  const isfocused = useIsFocused()
+const [optionTier,setOptionTier]=useState('Pending')
+
   useEffect(() => {
+    if(isfocused){
     (async () => {
+      setLoader(true)
       const token = await AsyncStorage.getItem("Token");
       setToken(token)
       const userDetails = jwtDecode(token);
@@ -42,16 +52,30 @@ const Orders = ({ navigation }) => {
           params: { requester: userDetails, forWho: "user" },
         })
         .then((res) => {
-          setOrderList(res.data);
+          const list  = res.data.filter((item)=>{
+            if(optionTier == 'Pending'){
+            return item.orderStatus.done == false
+            }else{
+            return item.orderStatus.done == true
+
+            }
+
+          })
+          console.log('this is the list',list)
+          setOrderList(list);
+          setLoader(false)
           console.log(res.data);
         })
         .catch((err) => {
           console.log("error occured", err);
         });
-    })();
-  }, []);
+    })();}
+  }, [isfocused, optionTier]);
+
+const changeTiers = (status)=>{
+  setOptionTier(status)
+}
   return (
-    //  <KeyboardAvoidingView   behavior="padding" enabled>
 
     <SafeAreaView
       style={
@@ -61,18 +85,71 @@ const Orders = ({ navigation }) => {
       }
     >
       <HeaderBar text={"Orders"} source={gasWin} />
-
+{loader?<View style={{
+  height:'66%',
+  marginTop:'20%'
+  ,backgroundColor:'white'
+  ,borderTopEndRadius:20
+  ,borderTopRightRadius:20
+  ,borderTopLeftRadius:20
+  ,borderTopWidth:1
+  ,justifyContent:'center'
+  ,alignItems:'center'
+}}>
+<ActivityIndicator color={COLORS.primary} size={30}/>
+<Text>Getting your orders ...</Text>
+</View>:
+<>
+<View>
+          <RadioButton.Group
+            onValueChange={(option) => {
+              changeTiers(option)
+            }}
+            value={optionTier}
+            
+          >
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <RadioButton.Item
+                labelStyle={{
+                  fontSize: 12,
+                }}
+                labelVariant="labelSmall"
+                label="Pending"
+                value="Pending"
+                size={10}
+              />
+              <RadioButton.Item
+                labelStyle={{
+                  fontSize: 12,
+                }}
+                labelVariant="labelSmall"
+                label="Done"
+                value="Done"
+                size={10}
+              />
+            </View>
+          </RadioButton.Group>
+        </View>
       <GasPlate
         custom={{
-          height: "74%",
+          height: "66%",
         }}
         dataList={orderList}
+        optiontier={optionTier}
         config={{
           navigation: navigation,
           to: "CallChat",
-          params: { currPage:'Orders', chatPage:'Chat', nextPage:'Chat', token:token },
+          params: { currPage:'Orders' ,chatPage:'Chat', nextPage:'Chat', token:token },
         }}
       />
+      </>
+      }
 
       <Container
         custom={{
@@ -130,7 +207,7 @@ const Orders = ({ navigation }) => {
                     return val + a;
                   };
                   let sum = priceList.reduce(addRedux, 0);
-                  return <Text>{sum}</Text>;
+                  return <Text>{sum} /=</Text>;
                 })()}
               </Text>
             </View>
@@ -138,7 +215,6 @@ const Orders = ({ navigation }) => {
         }}
       />
     </SafeAreaView>
-    // </KeyboardAvoidingView>
   );
 };
 
