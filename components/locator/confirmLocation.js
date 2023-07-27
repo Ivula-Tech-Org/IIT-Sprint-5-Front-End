@@ -19,16 +19,18 @@ const ConfirmLocation = ({ navigation }) => {
   const [loader, setLoader] = useState()
   const [userDetails, setUserDetails] = useState(null)
   const MapsRef = useRef(null)
-  const [loadView, setLoadView]= useState(false)
-  const [lat, setLat]=useState()
-  const [long, setLong]= useState()
+  const [loadView, setLoadView] = useState(false)
+  const [lat, setLat] = useState()
+  const [long, setLong] = useState()
+  const [permissionStatus, setPermissionStatus] = useState(false)
+
   const setLocator = async () => {
     console.log(userDetails)
-    try{
+    try {
 
       let newLocation = {
-        lat:lat,
-        long:long
+        lat: lat,
+        long: long
       }
 
       newLocation = JSON.stringify(newLocation)
@@ -36,8 +38,8 @@ const ConfirmLocation = ({ navigation }) => {
       await AsyncStorage.setItem('newLocation', newLocation)
       console.log(lat, long)
       navigation.goBack()
-  
-    }catch(err){
+
+    } catch (err) {
       alert('something went wrong, try again')
       console.log(err)
     }
@@ -45,22 +47,22 @@ const ConfirmLocation = ({ navigation }) => {
 
   }
 
-//   useEffect(()=>{
-// const toRegion = {
-//   latitude: -1.3198768,
-//   longitude: 36.8998693,
-//   latitudeDelta: 0.02,
-//   longitudeDelta: 0.02
-// }
+  //   useEffect(()=>{
+  // const toRegion = {
+  //   latitude: -1.3198768,
+  //   longitude: 36.8998693,
+  //   latitudeDelta: 0.02,
+  //   longitudeDelta: 0.02
+  // }
 
-//   MapsRef.current.animateToRegion(toRegion,1000)
+  //   MapsRef.current.animateToRegion(toRegion,1000)
 
-//   },[])
+  //   },[])
   const skipLocator = () => {
     navigation.goBack()
   }
   useEffect(() => {
-(async () => {
+    (async () => {
       const token = await AsyncStorage.getItem('Token')
       if (token) {
         setUserDetails(token)
@@ -79,6 +81,7 @@ const ConfirmLocation = ({ navigation }) => {
           return;
         }
 
+        setPermissionStatus(true)
         subscription = await Location.watchPositionAsync(
           { accuracy: Location.Accuracy.High, timeInterval: 10000 },
           (newLocation) => {
@@ -94,8 +97,29 @@ const ConfirmLocation = ({ navigation }) => {
               latitudeDelta: 0.02,
               longitudeDelta: 0.02
             }
-            
-  MapsRef.current.animateToRegion(toRegion,500)
+            const zoomLevel = 15
+            const animationDelay = 300
+
+            MapsRef.current.injectJavaScript(`
+  function delayedAnimation() {
+    const newLat = ${toRegion.latitude} + ${toRegion.latitudeDelta};
+    const newLon = ${toRegion.longitude} + ${toRegion.latitudeDelta};
+  
+    mymap.flyTo([newLat, newLon], ${zoomLevel}, {
+      animate: true,
+      duration: 0.7
+    });
+  
+    const marker = L.marker([newLat, newLon], {
+      icon: new L.Icon.Default({
+        iconSize: [20, 30],
+        shadowSize:[0,0]
+      }),
+    }).addTo(mymap);
+  }
+
+  setTimeout(delayedAnimation, ${animationDelay});
+`)
 
           }
         );
@@ -114,41 +138,52 @@ const ConfirmLocation = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1 }}
-    >
-      <Maps
-      withRef={MapsRef}
-      withMarker={false}
-      currRegion={currRegion}
-      />
+    <>
+      {permissionStatus ?
+        <SafeAreaView
+          style={{ flex: 1 }}
+        >
+          <Maps
+            withRef={MapsRef}
+          />
 
-      <View style={locStyles.container}>
+          <View style={locStyles.container}>
 
-        <Text style={{
-          fontSize: 25,
-          marginTop: '-10%',
-          color: COLORS.primary
-        }}>Where are you?</Text>
-        <Text style={
-          {
-            fontSize: 13,
-            width: '80%',
-            padding: 10,
-            textAlign: 'center'
-          }
-        }>
-          To deliver you gass. We would like to know where to deliver them to.
-        </Text>
-        {errorMessage && <ErrorBox text={errorMessage} />}
-        {loader && <ActivityIndicator color={COLORS.primary} style={{
-          marginBottom: 10
-        }} />}
-        <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} submit={setLocator}/>
-        <LongButtonLight text={'Cancel'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
+            <Text style={{
+              fontSize: 25,
+              marginTop: '-15%',
+              color: COLORS.primary
+            }}>Where are you?</Text>
+            <Text style={
+              {
+                fontSize: 13,
+                width: '80%',
+                padding: 10,
+                textAlign: 'center'
+              }
+            }>
+              To deliver your gass. We would like to know where to deliver them to.
+            </Text>
+            {errorMessage && <ErrorBox text={errorMessage} />}
+            {loader && <ActivityIndicator color={COLORS.primary} style={{
+              marginBottom: 10
+            }} />}
+            <LongButtonDark text={'Set Automatically'} butStyle={{ marginTop: 0 }} submit={setLocator} />
+            <LongButtonLight text={'Cancel'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
 
-      </View>
-    </SafeAreaView>
+          </View>
+        </SafeAreaView> : <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+
+          }}>
+          <ActivityIndicator color={COLORS.primary} size={25} />
+          <Text>loading... Waiting for location permissions</Text>
+
+        </View>}
+    </>
   )
 }
 

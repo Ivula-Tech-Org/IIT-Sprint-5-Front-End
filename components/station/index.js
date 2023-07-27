@@ -107,7 +107,7 @@ const Station = ({ navigation, route }) => {
                 backgroundColor: 'white',
                 position: 'absolute',
                 right: '10%',
-                top: '41%',
+                top: '39%',
                 zIndex: 1,
                 // borderWidth:1,
                 flexDirection: 'row'
@@ -132,7 +132,6 @@ const Station = ({ navigation, route }) => {
                     />}
                 <MenuContainer
                     custom={{
-                        alignSelf: 'flex-end',
 
                         borderRadius: 10,
                         paddingLeft: 15,

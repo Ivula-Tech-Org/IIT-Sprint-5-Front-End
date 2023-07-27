@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gass Link",
-    "scheme": "gassLink",
+    "scheme": "gasslink",
     "slug": "IIT-Sprint-5-Front-End",
     "version": "1.0.0",
     "orientation": "portrait",

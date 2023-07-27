@@ -52,9 +52,24 @@ const Home = ({ navigation }) => {
           .catch((err) => {
             alert("Sorry an error occured");
           });
+
+      axios
+      .get(`${variables.HOST_URL}front_end_service/categories`, {
+        headers: { authorization: token },
+      })
+      .then(async (res) => {
+        list = res.data.data;
+        setCategList(list)
+        console.log("inside ", list);
+      })
+      .catch((err) => {
+        alert("Sorry an error occured");
+      });
       } catch (err) {
         alert("something went wrong");
       }
+
+
     })();
   }, []);
 
@@ -64,7 +79,7 @@ const Home = ({ navigation }) => {
       console.log(item.gasCategories);
       return JSON.stringify(item.gasCategories)
         .toLocaleLowerCase()
-        .includes(itemString.toLocaleLowerCase());
+        .includes(itemString.toLowerCase());
     });
     console.log(list);
     setFilterList(list);
@@ -75,11 +90,9 @@ const Home = ({ navigation }) => {
       setFilterList(stationList);
     } else {
       let list = stationList.filter((item) => {
-        console.log(itemString);
-
         return JSON.stringify(item)
           .toLocaleLowerCase()
-          .includes(itemString.trim().toLocaleLowerCase());
+          .includes(itemString.trim().toLowerCase());
       });
       console.log(list);
       setFilterList(list);
@@ -104,7 +117,6 @@ const Home = ({ navigation }) => {
 
       <View>
         <CategBar
-          itemList={categList}
           handleCat={(item) => {
             filterByCateg(item);
           }}
@@ -112,7 +124,6 @@ const Home = ({ navigation }) => {
       </View>
       <ListGas
         onClick={(item) => {
-          console.log(item);
           navigation.navigate("Station", {
             station: item,
             user: userDetials,

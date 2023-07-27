@@ -2,7 +2,7 @@ import { Text, View, ActivityIndicator } from 'react-native'
 import { useEffect, useRef, useState, } from 'react'
 import * as Location from 'expo-location'
 import locStyles from './style'
-import { ErrorBox, LongButtonDark, LongButtonLight, Maps } from '../globals/utils'
+import { ErrorBox, LongButtonDark, LongButtonLight, Maps, variables } from '../globals/utils'
 import { COLORS } from '../globals/theme'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -19,7 +19,9 @@ const Locator = ({ navigation }) => {
   const [loader, setLoader] = useState()
   const [userDetails, setUserDetails] = useState(null)
   const MapsRef = useRef(null)
-  const [loadView, setLoadView]= useState(false)
+  const [loadView, setLoadView] = useState(false)
+  const [permissionStatus, setPermissionStatus] = useState(false)
+
   const setLocator = async () => {
     setLoader(true)
     setErrorMessage(null)
@@ -42,22 +44,11 @@ const Locator = ({ navigation }) => {
       })
   }
 
-//   useEffect(()=>{
-// const toRegion = {
-//   latitude: -1.3198768,
-//   longitude: 36.8998693,
-//   latitudeDelta: 0.02,
-//   longitudeDelta: 0.02
-// }
-
-//   MapsRef.current.animateToRegion(toRegion,1000)
-
-//   },[])
   const skipLocator = () => {
     navigation.navigate('HomeCast')
   }
   useEffect(() => {
-(async () => {
+    (async () => {
       const token = await AsyncStorage.getItem('Token')
       if (token) {
         setUserDetails(token)
@@ -75,7 +66,7 @@ const Locator = ({ navigation }) => {
           setError('Permission to access location denied');
           return;
         }
-
+setPermissionStatus(true)
         subscription = await Location.watchPositionAsync(
           { accuracy: Location.Accuracy.High, timeInterval: 10000 },
           (newLocation) => {
@@ -89,8 +80,30 @@ const Locator = ({ navigation }) => {
               latitudeDelta: 0.02,
               longitudeDelta: 0.02
             }
-            
-  MapsRef.current.animateToRegion(toRegion,500)
+
+            const zoomLevel = 15
+            const animationDelay = 300
+
+            MapsRef.current.injectJavaScript(`
+  function delayedAnimation() {
+    const newLat = ${toRegion.latitude} + ${toRegion.latitudeDelta};
+    const newLon = ${toRegion.longitude} + ${toRegion.latitudeDelta};
+  
+    mymap.flyTo([newLat, newLon], ${zoomLevel}, {
+      animate: true,
+      duration: 0.7
+    });
+  
+    const marker = L.marker([newLat, newLon], {
+      icon: new L.Icon.Default({
+        iconSize: [20, 30],
+        shadowSize:[0,0]
+      }),
+    }).addTo(mymap);
+  }
+
+  setTimeout(delayedAnimation, ${animationDelay});
+`)
 
           }
         );
@@ -109,13 +122,11 @@ const Locator = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView
+    <>{permissionStatus ? <SafeAreaView
       style={{ flex: 1 }}
     >
       <Maps
-      withRef={MapsRef}
-      withMarker={false}
-      currRegion={currRegion}
+        withRef={MapsRef}
       />
 
       <View style={locStyles.container}>
@@ -133,7 +144,7 @@ const Locator = ({ navigation }) => {
             textAlign: 'center'
           }
         }>
-          To deliver you gass. We would like to know where to deliver them to.
+          To deliver your gass. We would like to know where to deliver them to.
         </Text>
         {errorMessage && <ErrorBox text={errorMessage} />}
         {loader && <ActivityIndicator color={COLORS.primary} style={{
@@ -143,7 +154,18 @@ const Locator = ({ navigation }) => {
         <LongButtonLight text={'Set Latter'} butStyle={{ marginTop: 15 }} submit={skipLocator} />
 
       </View>
-    </SafeAreaView>
+    </SafeAreaView> : <View
+    style={{
+      flex:1,
+      justifyContent:'center',
+      alignItems:'center', 
+      
+    }}>
+      <ActivityIndicator color={COLORS.primary} size={25}/>
+      <Text>loading... Waiting for location permissions</Text>
+
+    </View>}</>
+
   )
 }
 

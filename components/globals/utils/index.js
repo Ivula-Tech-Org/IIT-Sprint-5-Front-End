@@ -17,12 +17,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { gasWin } from "../images";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, UrlTile } from "react-native-maps";
 import { EmptyBoxLoader } from "../animation";
 import WS from "react-native-websocket";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import html_script from '../../../assets/mapsHtml'
+import {WebView}from 'react-native-webview'
+
 
 class GetCateg {
   list = [];
@@ -75,7 +78,7 @@ const LongButtonLight = ({ text, textStyle, butStyle, submit }) => {
   );
 };
 const variables = {
-  HOST_URL: "http://192.168.1.109:8342/",
+  HOST_URL: "https://iit-21-flower-delivery-app-mcshelton.onrender.com/",
 };
 const Banner = ({ avator, custom }) => {
   return (
@@ -241,7 +244,7 @@ const SearchBar = ({ searchLogic, custom, getText }) => {
     >
       <TextInput
         placeholder="type here"
-        onChangeText={(e)=>{
+        onChangeText={(e) => {
           getText(e)
         }}
         style={{
@@ -268,30 +271,33 @@ const SearchBar = ({ searchLogic, custom, getText }) => {
   );
 };
 const dataList = ["me", "up", "you", "and"];
-const CategBar = ({  handleCat }) => {
+
+const CategBar = ({ handleCat }) => {
   const BarClass = new GetCateg(variables);
-  const[itemList, setListing]=useState('here me and me')
-  let list='one';
-  useEffect(()=>{(async () => {
-    let token = "";
-    try {
-      token = await AsyncStorage.getItem("Token");
-    } catch (err) {
-      console.log(err);
-    }
-    axios
-      .get(`${variables.HOST_URL}front_end_service/categories`, {
-        headers: { authorization: token },
-      })
-      .then(async (res) => {
-        list = res.data.data;
-        setListing(list)
-        console.log("inside ", list);
-      })
-      .catch((err) => {
-        alert("Sorry an error occured");
-      });
-  })()},[])
+  const [itemList, setListing] = useState('here me and me')
+  let list = 'one';
+  useEffect(() => {
+    (async () => {
+      let token = "";
+      try {
+        token = await AsyncStorage.getItem("Token");
+      } catch (err) {
+        console.log(err);
+      }
+      axios
+        .get(`${variables.HOST_URL}front_end_service/categories`, {
+          headers: { authorization: token },
+        })
+        .then(async (res) => {
+          list = res.data.data;
+          setListing(list)
+          console.log("inside ", list);
+        })
+        .catch((err) => {
+          alert("Sorry an error occured");
+        });
+    })()
+  }, [])
   return (
     <FlatList
       data={itemList}
@@ -323,7 +329,7 @@ const CategBar = ({  handleCat }) => {
         item = item.item;
         return (
           <TouchableOpacity
-            onPress={()=>{
+            onPress={() => {
               handleCat(item.gasName)
             }}
             style={{
@@ -398,33 +404,33 @@ const ListGas = ({ listGas, custom, onClick, loader }) => {
               ListEmptyComponent={() => {
                 return (
                   <>
-                  {loader ? (
-                    <ActivityIndicator
-                      style={{
-                        marginTop: 30,
-                      }}
-                      size={30}
-                      color={COLORS.primary}
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: "25%",
-                      }}
-                    >
-                      <EmptyBoxLoader size={"80%"} />
-                      <Text
+                    {loader ? (
+                      <ActivityIndicator
                         style={{
-                          marginTop: "-10%",
+                          marginTop: 30,
+                        }}
+                        size={30}
+                        color={COLORS.primary}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginTop: "25%",
                         }}
                       >
-                        This place is empty
-                      </Text>
-                    </View>
-                  )}
-                </>
+                        <EmptyBoxLoader size={"80%"} />
+                        <Text
+                          style={{
+                            marginTop: "-10%",
+                          }}
+                        >
+                          This place is empty
+                        </Text>
+                      </View>
+                    )}
+                  </>
                 )
               }}
               style={{
@@ -666,14 +672,14 @@ const GasPlate = ({
                       optiontier === "Done"
                         ? alert("This item is done")
                         : config &&
-                          config.navigation.navigate(config.to, {
-                            currPage: config.params.currPage,
-                            chatPage: config.params.chatPage,
-                            nextPage: config.params.chatPage,
-                            nextPage: config.params.nextPage,
-                            token: config.params.token,
-                            cartItems: item,
-                          });
+                        config.navigation.navigate(config.to, {
+                          currPage: config.params.currPage,
+                          chatPage: config.params.chatPage,
+                          nextPage: config.params.chatPage,
+                          nextPage: config.params.nextPage,
+                          token: config.params.token,
+                          cartItems: item,
+                        });
                       onClick && onClick(item);
                     }}
                     style={{
@@ -796,63 +802,90 @@ const Maps = ({
   custom,
 }) => {
   const testList = [10, 20, 30, 40];
+  
   return (
-    <View style={[{ height: "50%" }, custom]}>
-      <MapView
-        ref={withRef}
-        style={{ height: "100%" }}
-        showsUserLocation={true}
-        followsUserLocation={true}
-      >
-        {currRegion && (
-          <>
-            <Marker
-              coordinate={{
-                latitude: currRegion.latitude,
-                longitude: currRegion.longitude,
-              }}
-              title="You"
-            ></Marker>
-            {/* <FlatList
-            data={markerList}
-            renderItem={(inItem)=>{
-              let item = inItem.item
-              return (
-                <Marker
-                  coordinate={{
-                    // latitude: currRegion.latitude,
-                    latitude: parseFloat(item.lat),
-                    longitude: parseFloat(item.long),
+    <View style={[{ height: "55%" }, custom]}>
 
-                    // longitude: currRegion.longitude,
-                  }}
-                  title="Supplier"
-                ></Marker>
-              )}}
-            /> */}
-            {markerList &&
-              markerList.map((item, index) => {
-                return (
-                  <Marker
-                    key={index}
-                    coordinate={{
-                      // latitude: currRegion.latitude,
-                      latitude: parseFloat(item.lat),
-                      longitude: parseFloat(item.long),
+      <WebView ref={withRef}  source={{ html: html_script }} style={[{ height: "100%" }]} />
 
-                      // longitude: currRegion.longitude,
-                    }}
-                    title="Supplier"
-                  ></Marker>
-                );
-              })}
-          </>
-        )}
-      </MapView>
     </View>
   );
 };
-const Deals = ({ custom, onClick, dealData ,loader}) => {
+
+
+// const Maps = ({
+//   withRef,
+//   tracer,
+//   markerList,
+//   withMarker,
+//   initialRegion,
+//   currRegion,
+//   custom,
+// }) => {
+//   const testList = [10, 20, 30, 40];
+//   return (
+//     <View style={[{ height: "50%" }, custom]}>
+//       <MapView
+//         ref={withRef}
+//         style={{ height: "100%" }}
+//         provider={PROVIDER_OSP}
+//         showsUserLocation={true}
+//         followsUserLocation={true}
+
+//       >
+//         {currRegion && (
+//           <>
+//             <Marker
+//               coordinate={{
+//                 latitude: currRegion.latitude,
+//                 longitude: currRegion.longitude,
+//               }}
+//               title="You"
+//             ></Marker>
+//             {/* <FlatList
+//             data={markerList}
+//             renderItem={(inItem)=>{
+//               let item = inItem.item
+//               return (
+//                 <Marker
+//                   coordinate={{
+//                     // latitude: currRegion.latitude,
+//                     latitude: parseFloat(item.lat),
+//                     longitude: parseFloat(item.long),
+
+//                     // longitude: currRegion.longitude,
+//                   }}
+//                   title="Supplier"
+//                 ></Marker>
+//               )}}
+//             /> */}
+//             {markerList &&
+//               markerList.map((item, index) => {
+//                 return (
+//                   <Marker
+//                     key={index}
+//                     coordinate={{
+//                       // latitude: currRegion.latitude,
+//                       latitude: parseFloat(item.lat),
+//                       longitude: parseFloat(item.long),
+
+//                       // longitude: currRegion.longitude,
+//                     }}
+//                     title="Supplier"
+//                   ></Marker>
+//                 );
+//               })}
+//           </>
+//         )}
+//         <UrlTile
+//         urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+//         maximumZ={19}
+//       />
+//       </MapView>
+//     </View>
+//   );
+// };
+const Deals = ({ custom, onClick, dealData, loader }) => {
   return (
     <>
       <FlatList
@@ -972,33 +1005,33 @@ const Deals = ({ custom, onClick, dealData ,loader}) => {
         ListEmptyComponent={() => {
           return (
             <>
-                  {loader ? (
-                    <ActivityIndicator
-                      style={{
-                        marginTop: 30,
-                      }}
-                      size={30}
-                      color={COLORS.primary}
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginTop: "25%",
-                      }}
-                    >
-                      <EmptyBoxLoader size={"80%"} />
-                      <Text
-                        style={{
-                          marginTop: "-10%",
-                        }}
-                      >
-                        This place is empty
-                      </Text>
-                    </View>
-                  )}
-                </>
+              {loader ? (
+                <ActivityIndicator
+                  style={{
+                    marginTop: 30,
+                  }}
+                  size={30}
+                  color={COLORS.primary}
+                />
+              ) : (
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "25%",
+                  }}
+                >
+                  <EmptyBoxLoader size={"80%"} />
+                  <Text
+                    style={{
+                      marginTop: "-10%",
+                    }}
+                  >
+                    This place is empty
+                  </Text>
+                </View>
+              )}
+            </>
           );
         }}
       />

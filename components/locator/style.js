@@ -12,7 +12,10 @@ const locStyles = StyleSheet.create({
         },
         shadowRadius:10,
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+        marginTop:'-5%',
+        borderWidth:1
+        ,backgroundColor:'white'
     }
 })
 

@@ -101,6 +101,10 @@ const Search = ({ navigation }) => {
       <SearchBar
         getText={(e) => {
           setSearchText(e);
+          if(e == ''){
+            setDupAccList(null)
+            setDupGassList(null)
+          }
         }}
         searchLogic={() => {
           const results = gassDeals.filter((element) => {

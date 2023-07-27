@@ -104,7 +104,89 @@ const CallChat = ({ navigation, route }) => {
               latitudeDelta: (maxLat - minLat) * 2.2,
               longitudeDelta: (maxLong - minLong) * 2.2,
             };
-            MapsRef.current.animateToRegion(finalRegion, 500);
+
+            MapsRef.current?.injectJavaScript(`
+      // Add two markers
+
+      const currRegionLat = ${currRegion.latitude}
+      const currRegionLong = ${currRegion.longitude}
+      const suppRegionLat = ${suppRegion.latitude}
+      const suppRegionLong = ${suppRegion.longitude}
+
+      var marker1 = L.marker([suppRegionLat,suppRegionLong]).addTo(mymap);
+      var marker2 = L.marker([currRegionLat,currRegionLong]).addTo(mymap);
+
+
+      // var marker1 = L.marker([-1.285467, 36.824426]).addTo(mymap);
+      // var marker2 = L.marker([-1.269844, 36.811267]).addTo(mymap);
+
+
+      var markers = L.featureGroup([marker1, marker2]);
+
+      mymap.fitBounds(markers.getBounds().pad(0.1));
+
+      var accessToken =
+        "pk.eyJ1IjoibWNzaGVsdG9uIiwiYSI6ImNsa2twMXIwMzBvdGIzZm42MGx4NzF1a3QifQ.gw16yt_45I6zX2HEMRgM8g";
+      var directionsURL = \`https://api.mapbox.com/directions/v5/mapbox/driving/\${
+        marker1.getLatLng().lng
+      },\${marker1.getLatLng().lat};\${marker2.getLatLng().lng},\${
+        marker2.getLatLng().lat
+      }?geometries=geojson&access_token=\${accessToken}\`;
+
+      fetch(directionsURL)
+        .then((response) => response.json())
+        .then((data) => {
+          var tPathCoordinates = data.routes[0].geometry.coordinates;
+          function reverseCoordinates(coordinates) {
+            return coordinates.map((coordinate) => [
+              coordinate[1],
+              coordinate[0],
+            ]);
+          }
+
+          var pathCoordinates = reverseCoordinates(tPathCoordinates);
+
+          console.log("Original Coordinates:", tPathCoordinates);
+          console.log("Reversed Coordinates:", pathCoordinates);
+
+          var path = L.polyline(pathCoordinates).addTo(mymap);
+
+          var markers = L.featureGroup([marker1, marker2]);
+          mymap.fitBounds(markers.getBounds().pad(0.1));
+
+          function animatePath() {
+            var index = 0;
+            var animateInterval = setInterval(function () {
+              if (index < pathCoordinates.length) {
+                var deltaLat =
+                  pathCoordinates[index][0] - mymap.getCenter().lat;
+                var deltaLng =
+                  pathCoordinates[index][1] - mymap.getCenter().lng;
+                var zoomDelta = 2; 
+
+                mymap.flyTo(
+                  [
+                    mymap.getCenter().lat + deltaLat,
+                    mymap.getCenter().lng + deltaLng,
+                  ],
+                  mymap.getZoom() + zoomDelta,
+                  {
+                    duration: 1, 
+                  }
+                );
+
+                index++;
+              } else {
+                clearInterval(animateInterval);
+              }
+            }, 1000);
+          }
+
+          mymap.on("load", animatePath);
+        })
+        .catch((error) => console.error("Error fetching route:", error));
+
+`)
           }
         );
       } catch (error) {
